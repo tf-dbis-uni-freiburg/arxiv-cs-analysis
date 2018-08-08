@@ -1,0 +1,11 @@
+The program is executed as follows:
+python3 nounphrase_visualization.py
+The development server runs on port 8050, so the following IP address (for the ‘Kilda’ machine which hosts the code) needs to be typed in the browser with port 8050.
+http://132.230.150.9:8050/
+
+The seearch query can be entered (mutiple noun phrases should be separated by commas). Two graphs: one for the  ‘Percentage of occurrences of chosen noun phrase(s) per Month’, and another for the ‘Percentage of papers containing chosen noun phrase(s) per Month’. Both the graphs are returned in the same webpage as soon as the Submit button
+is clicked. Phrases from the query which are not found are displayed above the graph. 
+If none of the phrases is found, no graph is displayed.
+
+A very detailed explanation of the entire code (all modules) is available in 'Noun phrase Frequency Visualization.pdf'. The code itself has detailed documentation strings and
+inline comments.s
