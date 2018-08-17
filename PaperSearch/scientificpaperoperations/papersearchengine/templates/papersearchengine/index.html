@@ -1,0 +1,186 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Papers Search Engine</title>
+    {% load static %}
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
+    <!-- Bootstrap core CSS -->
+    <link href="{% static 'papersearchengine/css/bootstrap.min.css' %}" rel="stylesheet">
+    <!-- Material Design Bootstrap -->
+    <link href="{% static 'papersearchengine/css/mdb.min.css' %}" rel="stylesheet">
+    <!-- Your custom styles (optional) -->
+    <link href="{% static 'papersearchengine/css/style.min.css' %}" rel="stylesheet">
+  <style>
+  .trianglify{
+    background-image: url( "{% static 'papersearchengine/img/trianglifyBuGn.png' %}");
+  }
+  </style>
+</head>
+
+<body class="trianglify">
+
+<header>
+<!--Navbar-->
+<nav class="navbar navbar-expand-lg navbar-dark colour1">
+
+  <!-- Navbar brand -->
+  <a class="navbar-brand" href="/"><strong>PaperSearch</strong></a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
+        aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+
+      <!-- Links -->
+      <ul class="navbar-nav mr-auto">
+          <li class="nav-item">
+              <a class="nav-link" href="/searchengine/phrasesearch">Phrase Search
+              </a>
+          </li>
+          <li class="nav-item">
+              <a class="nav-link" href="/searchengine/metadatasearch">Get Metadata from title</a>
+          </li>
+          <li class="nav-item">
+              <a class="nav-link" href="/searchengine/authorsearch">Search by Author</a>
+          </li>
+          <li class="nav-item">
+              <a class="nav-link" href="/searchengine/citedpapersearch">Search by cited paper</a>
+          </li>
+          <li class="nav-item">
+              <a class="nav-link" href="/searchengine/citedauthorsearch">Search by cited authors</a>
+          </li>
+
+      </ul>
+    <a class="navbar-brand" href="https://arxiv.org/" target="_blank">
+    <img src="{% static 'papersearchengine/img/arxivlogo.png' %}" height="30" class="d-inline-block align-top" alt="arXiV.org">
+    </a>
+    <a class="navbar-brand" href="https://dblp.org/" target="_blank">
+    <img src="{% static 'papersearchengine/img/dblplogo.png' %}" height="30" class="d-inline-block align-top" alt="dblp">
+    </a>
+    
+      <!-- Links -->
+
+  </div>
+  <!-- Collapsible content -->
+
+</nav>
+<!--/.Navbar-->
+</header>
+    <!-- Start your project here-->
+<div class="container mt-5 ">
+
+<div class="row">
+    <div class="col-md-12 mb-5">
+        <div class="card card-image colour1 text-center">
+                    <h1 class="card-title pt-3 mb-2 font-bold"><strong>Welcome to PaperSearch!</strong></h1>
+                    <p class="mx-5 mb-1">Here, you can perform a variety of searches on our corpus of scientific papers. 
+			You can search for a phrase in the content of all the papers, get metadata about papers, search for papers by title or author, 
+			and also search by the title of the cited paper/cited author(s). </p>
+     
+       </div>
+   </div>
+<!-- Card deck -->
+<div class="card-deck">
+
+  <!-- Card -->
+  <div class="card mb-4 colour1">
+	<div class="card-header card-title colour1">
+		<h4 class="card-title">Search by word/phrase</h4>
+	</div>
+        <!--Card content-->
+    	<div class="card-body colour1">
+    	     <p class="card-text colour1 text-white">Search for a word/phrase in the content of all the papers in the corpus.</p>
+	</div>
+      	<div class="card-footer colour1">
+      		<a href="/searchengine/phrasesearch" class="btn btn-md teal darken-2">Take me there!</a>
+	</div>
+ </div>
+  <!-- Card -->
+
+  <!-- Card -->
+  <div class="card mb-4 colour1">
+	<div class="card-header card-title colour1">
+		<h4 class="card-title">Get metadata from title</h4>
+	</div>
+        <!--Card content-->
+    	<div class="card-body colour1">
+    	     <p class="card-text colour1 text-white">Search by paper title and get author(s), publication date, arXiV, and dblp URLs.</p>
+	</div>
+      	<div class="card-footer colour1">
+      		<a href="/searchengine/metadatasearch" class="btn btn-md teal darken-2">Take me there!</a>
+	</div>
+ </div>
+  <!-- Card -->
+
+  <!-- Card -->
+  <div class="card mb-4 colour1">
+	<div class="card-header card-title colour1">
+		<h4 class="card-title">Find papers by author(s)</h4>
+	</div>
+        <!--Card content-->
+    	<div class="card-body colour1">
+    	     <p class="card-text colour1 text-white">Find papers which have been written by an author or a group of authors.</p>
+	</div>
+      	<div class="card-footer colour1">
+      		<a href="/searchengine/authorsearch" class="btn btn-md teal darken-2">Take me there!</a>
+	</div>
+ </div>
+  <!-- Card -->
+
+<!-- Card -->
+  <div class="card mb-4 colour1">
+	<div class="card-header card-title colour1">
+		<h4 class="card-title">Search by cited paper</h4>
+	</div>
+        <!--Card content-->
+    	<div class="card-body colour1">
+    	     <p class="card-text text-white colour1">Search by title of cited papers, retrieve sentences in a (citing) paper which contain citations -- these citations are papers whose title is given in the search query.</p>
+	</div>
+      	<div class="card-footer colour1">
+      		<a href="/searchengine/citedpapersearch" class="btn btn-md teal darken-2">Take me there!</a>
+	</div>
+ </div>
+  <!-- Card -->
+
+<!-- Card -->
+  <div class="card mb-4 colour1">
+	<div class="card-header card-title colour1">
+		<h4 class="card-title">Search by cited author(s)</h4>
+	</div>
+        <!--Card content-->
+    	<div class="card-body colour1 texcolour1">
+    	     <p class="card-text text-white colour1">Search by cited author(s), retrieve sentences in a (citing) paper which contain citations -- these citations are papers whose author(s) are given in the search query.</p>
+	</div>
+      	<div class="card-footer colour2">
+      		<a href="/searchengine/citedauthorsearch" class="btn btn-md teal darken-2">Take me there!</a>
+	</div>
+ </div>
+  <!-- Card -->
+
+
+</div>
+<!-- Card deck -->
+
+</div>
+<!--row -->
+<!--container -->
+</div>
+    <!-- SCRIPTS -->
+    <!-- JQuery -->
+    <script type="text/javascript" src="{% static 'papersearchengine/js/jquery-3.3.1.min.js' %}"></script>
+    <!-- Bootstrap tooltips -->
+    <script type="text/javascript" src="{% static 'papersearchengine/js/popper.min.js' %}"></script>
+    <!-- Bootstrap core JavaScript -->
+    <script type="text/javascript" src="{% static 'papersearchengine/js/bootstrap.min.js' %}"></script>
+    <!-- MDB core JavaScript -->
+    <script type="text/javascript" src="{% static 'papersearchengine/js/mdb.min.js' %}"></script>
+</body>
+
+</html>

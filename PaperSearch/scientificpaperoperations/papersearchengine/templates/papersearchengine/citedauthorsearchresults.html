@@ -1,0 +1,91 @@
+{% extends "papersearchengine/base_generic.html" %}
+{% load static %}
+{% block navlinks %}
+<ul class="navbar-nav mr-auto">
+          <li class="nav-item">
+              <a class="nav-link" href="/searchengine/phrasesearch">Phrase Search</a>
+          </li>
+          <li class="nav-item">
+              <a class="nav-link" href="/searchengine/titlesearch">Get Metadata from title</a>
+          </li>
+          <li class="nav-item">
+              <a class="nav-link" href="/searchengine/authorsearch">Search by Author</a>
+          </li>
+          <li class="nav-item">
+              <a class="nav-link" href="/searchengine/citedpapersearch">Search by cited paper</a>
+          </li>
+          <li class="nav-item active">
+              <a class="nav-link" href="/searchengine/citedauthorsearch">Search by cited authors </a>
+              <span class="sr-only">(current)</span> 
+          </li>
+
+      </ul>
+
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12 pt-3">
+        <div class="card card-image colour1 mb-2">
+            <div class="text-white text-center">
+                <div>
+		
+		{% if numresults == 0 %}
+			Sorry, your query <strong> {{ query }} </strong> returned no results.
+		{% elif numresults < numrows %}
+			<strong> {{ totalcitations }} </strong> total citation{{totalcitations|pluralize}} and 
+			<strong> {{ uniquecitations }} </strong> total citation{{uniquecitations|pluralize}} were found for your search query, 
+			<strong> {{ query }} </strong>. The number of sentences containing these citations is {{ numresults }}. 
+			Note: The same citation may occur multiple times in one paper.
+			Displaying <strong> all {{ numresults }} </strong> result{{totalcitations|pluralize}}!
+		{% else %}
+			<strong> {{ totalcitations}} </strong> total citation{{totalcitations|pluralize}} and 
+			<strong> {{ uniquecitations}} </strong> total citation{{uniquecitations|pluralize}} were found for your search query, 
+			<strong> {{ query }} </strong>. 
+			Note: The same citation may occur multiple times in one paper.
+			Displaying <strong>{{ numrows }} </strong> result{{totalcitations|pluralize}} (sentence{{totalcitations|pluralize}})!
+		{% endif %}
+
+		<a href="/searchengine/citedauthorsearch" class="btn teal darken-2 btn-md text-white">Search again</a>
+                </div>
+            </div>
+        </div>
+    </div>
+<h5>
+
+</h5>
+<div class="card-group">
+	<div class="row mb5">
+		{% for annotation, details, sentence, arxiv_identifier, title, authors, arxiv_url, published_date, dblp_url in results %}
+			<div class="col-4">
+				<div class="card mb-4 mt-3 teal darken-4 resultscard">
+					<div class="card-header #4fc3f7 text-white colour1">
+					<h5>{{forloop.counter}}. {{title}}</h5>
+					</div>
+					<!--Card content-->
+					<div class="card-body text-white teal darken-3">
+
+     						<!--Title-->
+   						<h5 class="card-title"> {{authors}} </h4>
+      						<h6> {{published_date}} </h6>
+      						<p> {{sentence}} </p>
+						<p> <strong>Cited paper details:</strong> {{details}}
+					</div>
+       					<div class="card-footer text-muted teal darken-4 text-white">
+      						<a href="{{arxiv_url}}" target="_blank">
+      						<img src="{% static 'papersearchengine/img/arxivlogo.png' %}" height="30" title="Visit this paper's page on arXiV." class="mr-5 pr-4" alt="arXiV.org"></a>
+      						{{arxiv_identifier}}
+						{% if dblp_url %} 
+							<a href="{{dblp_url}}" target="_blank">
+     							<img src="{% static 'papersearchengine/img/dblplogo.png' %}" height="30" title="Visit this paper's page on dblp." class="ml-5 pl-4" alt="dblp"> </a>
+						{% else %}
+     							<img src="{% static 'papersearchengine/img/dblplogo.png' %}" title="No dblp URL found for this result" height="30" class="ml-5 pl-4" alt="dblp"> </a>
+						{% endif %}
+
+					</div>
+				</div>
+			</div>
+		{% endfor %}
+	</div>
+</div>
+{% endblock %}

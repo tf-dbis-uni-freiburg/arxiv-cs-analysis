@@ -1,0 +1,64 @@
+{% extends "papersearchengine/base_generic.html" %}
+{% block navlinks %}
+<ul class="navbar-nav mr-auto">
+          <li class="nav-item">
+              <a class="nav-link" href="/searchengine/phrasesearch">Phrase Search</a>
+          </li>
+          <li class="nav-item">
+              <a class="nav-link" href="/searchengine/titlesearch">Get Metadata from title</a>
+          </li>
+          <li class="nav-item active">
+              <a class="nav-link" href="/searchengine/authorsearch">Search by Author</a>
+		<span class="sr-only">(current)</span> 
+          </li>
+          <li class="nav-item">
+              <a class="nav-link" href="/searchengine/citedpapersearch">Search by cited paper</a>
+          </li>
+          <li class="nav-item">
+              <a class="nav-link" href="/searchengine/citedauthorsearch">Search by cited authors</a>
+          </li>
+
+      </ul>
+
+{% endblock %}
+{% block content %}
+<div class="container">
+{% if form.errors %}
+      <p style="color: green;"
+         Please correct the error{{ form.errors|pluralize }} below.
+      </p>
+{% endif %}
+
+<div class="container mt-5 pt-5 ">
+
+<div class="row">
+    <div class="col-md-12 mb-2">
+        <div class="card card-image teal darken-4 text-white text-center">
+                    <h1 class="card-title pt-3 mb-2 font-bold"><strong>Author Search!</strong></h1>
+                    <p class="mx-5 mb-1">This page allows you to find papers by an author or set of authors. 
+			It returns the following metadata about each paper: author(s), title, published date, arXiV, and dblp links.Ten results are returned by default (if the search returns at least 
+			10 results), but you can also choose to return a different number of results.</p>
+	</div>
+    </div>
+</div>
+
+<form action="" method="get">
+<div class="form-row">
+	<div class="form-group col-md-7">
+		{{ form.query }}
+	</div>
+	<div class="form-group col-md-4">
+	{{ form.numrows }}
+	</div>
+    	<div class="form-group col-md-1">
+	  <button name="submit" type="submit" class="btn teal darken-4">
+    		<i class="fa fa-search" aria-hidden="true"></i>
+	 </button>
+    	</div>
+</div>
+</form>
+
+<!--container -->
+
+</div>
+{% endblock %}
