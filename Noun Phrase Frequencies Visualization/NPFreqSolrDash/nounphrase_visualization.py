@@ -233,7 +233,7 @@ def show_graph_total(n_clicks, input_box):
     # Store the layout with the appropriate title and y axis labels for the graph
     layout_total = go.Layout(
                     title = 'Percentage of occurrences of chosen noun phrase(s) per Month',
-                    xaxis = {'title': 'Publication date', 'tickformat': '%b %y', 'tickmode': 'linear', 'tick0': '2007-04-30', dtick:'M2'},
+                    xaxis = {'title': 'Publication date', 'tickformat': '%b %y', 'tick0': '2007-04-30', 'dtick': 'M2'},
                     yaxis = {'title': 'Percentage of phrase occurrences', 'ticksuffix': '%'},
                     plot_bgcolor = colours['background'],
                     paper_bgcolor = colours['background'],
@@ -306,7 +306,7 @@ def show_graph_unique(n_clicks, input_box):
     # Store the layout with the appropriate title and y axis labels for the graph
     layout_unique = go.Layout(
                     title = 'Percentage of papers containing chosen noun phrase(s) per Month',
-                    xaxis = {'title': 'Publication date', 'tickformat': '%b %y', 'nticks': 70},
+                    xaxis = {'title': 'Publication date', 'tickformat': '%b %y', 'tick0': '2007-04-30', 'dtick': 'M2'},
                     yaxis = {'title': 'Percentage of papers with noun phrase', 'ticksuffix': '%'},
                     plot_bgcolor = colours['background'],
                     paper_bgcolor = colours['background'],
