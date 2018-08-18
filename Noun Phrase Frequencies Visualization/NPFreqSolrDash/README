@@ -7,5 +7,5 @@ The seearch query can be entered (mutiple noun phrases should be separated by co
 is clicked. Phrases from the query which are not found are displayed above the graph. 
 If none of the phrases is found, no graph is displayed.
 
-A very detailed explanation of the entire code (all modules) is available in 'Noun phrase Frequency Visualization.pdf'. The code itself has detailed documentation strings and
+A detailed explanation of the entire code (all modules) is available in 'Noun phrase Frequency Visualization.pdf'. The code itself has detailed documentation strings and
 inline comments.s
