@@ -174,7 +174,7 @@ def search_references(query, num_rows, search_type):
             query)
 
 def search_authors(query, num_rows):
-    """ Returns all metadata (title, authors, url) when names of 1 or more
+    """ Returns all metadata (title, authors, urls) when names of 1 or more
     authors are given in the user query. """
     results, query, num_results = search_solr(query, num_rows,
                                              'arxiv_metadata', 'authors',
@@ -195,7 +195,7 @@ def search_authors(query, num_rows):
 
 def search_meta_titles(query, num_rows):
     """ Returns all metadata (title, authors, url) when a partial or
-    copmlete title is given in the user query. """
+    complete title is given in the user query. """
     results, query, num_results = search_solr(query, num_rows,
                                              'arxiv_metadata', 'title',
                                              'exact')
@@ -213,24 +213,6 @@ def search_meta_titles(query, num_rows):
             result.append(dblp_url)
 
     return results, num_results, num_rows
-
-def num_rows_input(num_rows=10):
-    """ Function to take number of results to display as input from the user.
-    Includes error handling. """
-    tmp = "Select no. of results to display (to display top 10 results, press Enter): "
-    num_rows_string = input(tmp)
-    if num_rows_string == '':
-        # Return default value
-        return num_rows 
-    try:
-        num_rows = int(num_rows_string)
-        # Check for floats/doubles
-        if not isinstance(num_rows, int):
-            raise ValueError
-        return num_rows
-    except ValueError:
-        print("Invalid number of rows. Try again")
-        return num_rows_input()
 
 def add_query_type(query, query_type):
     """ Returns the query based on the query type (exact or proximity)

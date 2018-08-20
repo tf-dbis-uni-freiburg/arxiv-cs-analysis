@@ -1,3 +1,5 @@
+""" Module to create files with positively trending and negative trending noun phrases between Sept-Dec 2007
+and Sept-Dec 2017"""
 import requests
 import json
 import pandas as pd
@@ -164,19 +166,19 @@ def create_sorted_stats_dfs(joined_df):
 
 def write_to_files(positive_phrases_diff, negative_phrases_diff, positive_docs_diff, negative_docs_diff):
     """ Writes the 4 dataframes in the arguments to four csv files."""
-    positive_phrases_diff.to_csv('Output/positive_phrases_differences.tsv', sep='\t')
-    negative_phrases_diff.to_csv('Output/negative_phrases_differences.tsv', sep='\t')
-    positive_docs_diff.to_csv('Output/positive_docs_differences.tsv', sep='\t')
-    negative_docs_diff.to_csv('Output/negative_docs_differences.tsv', sep='\t')
+    positive_phrases_diff.to_csv('Output/SeptDec2007_2017/positive_phrases_differences.tsv', sep='\t')
+    negative_phrases_diff.to_csv('Output/SeptDec2007_2017/negative_phrases_differences.tsv', sep='\t')
+    positive_docs_diff.to_csv('Output/SeptDec2007_2017/positive_docs_differences.tsv', sep='\t')
+    negative_docs_diff.to_csv('Output/SeptDec2007_2017/negative_docs_differences.tsv', sep='\t')
 
 def main():
     """Main function which gets the frequencies of phrases in 2 quarters (in dataframes), joins them and
     calculates statistics from them."""
     try:
         # If pickle already exists, there is no need to make the data frames again.
-        pickle_start = open('start_df.pickle', 'rb')
+        pickle_start = open('Pickles/SeptDec_2007_df.pickle', 'rb')
         start_df = pickle.load(pickle_start)
-        pickle_end = open('end_df.pickle', 'rb')
+        pickle_end = open('Pickles/SeptDec_2017_df.pickle', 'rb')
         end_df = pickle.load(pickle_end)
 
     except FileNotFoundError:
@@ -184,10 +186,10 @@ def main():
         # Get dataframes based on 2 Solr date range queries
         start_df = grouped_dataframes_from_daterange('2007-09-01', '2007-12-31')
         end_df = grouped_dataframes_from_daterange('2017-09-01', '2017-12-31')
-        start_pickle = open('start_df.pickle', 'wb')
+        start_pickle = open('Pickles/SeptDec_2007_df.pickle', 'wb')
         pickle.dump(start_df, start_pickle)
         start_pickle.close()
-        end_pickle = open('end_df.pickle', 'wb')
+        end_pickle = open('Pickles/SeptDec_2017_df.pickle', 'wb')
         pickle.dump(end_df, end_pickle)
         end_pickle.close()
     # Normalize by dividing the total_occurrences and total_docs by the total no. of phrases and total no. of docs

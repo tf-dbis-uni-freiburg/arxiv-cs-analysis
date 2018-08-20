@@ -1,0 +1,20 @@
+10 sets of the 4 tsv files (positive_phrases_differences, positive_docs_differences, negative_phrases_differences, negative_docs_differences) are created. These are stored under different sub-directories within /home/ashwath/Programs/Python/NPFreqSolrDash/TrendsCalculation/Output/: 2007_2017, 2008_2017, 2009_2017,...,2016_2017.
+
+
+1st column, phrase, the noun phrase
+2nd column, percentage_occurrences_2007, the percentage of occurrences (phrase occurrences) of the noun phrase in all the papers published in 2007 (for 2007_2017). This column will be percentage_occurrences_2009 if the file is in sub-directory 2009_2017.
+3rd column, percentage_docs_2007, percentage of docs (papers) in which the noun phrase occurs in all papers published in 2007 (for 2007_2017). Again, this column will be different based on the sub-directory the file is in.
+4th column, percentage_occurrences_2017: the percentage of occurrences (phrase occurrences) of the noun phrase in all the papers published in 2017 (end year is the same in all sub-directories)
+5th column, percentage_docs_2017: percentage of docs (papers) in which the noun phrase occurs in all papers published in 2017 end year is the same in all sub-directories)
+The 5th column, phrase_differences = percentage_occurrences_2017 - percentage_occurrences_2007  (for 2007_2017, again the second term varies depending on which sub-directory it is in).
+Similarly, 6th column, doc_differences for 2007_2017 = percentage_docs_2017 - percentage_docs_2007 (second term varies again depending on the sub-directory).
+7th column, min_docs_years, contains the minimum yearly percentage of no. of docs in which each noun phrase occurs (for each of the years 2007,...,2017)
+8th column, mean_docs_years, contains the mean yearly percentage of no. of docs in which each noun phrase occurs (for each of the years 2007,...,2017)
+9th column, total_occurrences, contains the no. of occurrences of the noun phrase in the whole corpus.
+10th column, total_documents, contains the no. of doc
+
+The 4 types of files in each subdirectory are
+1. positive_phrases_differences, files in which phrase_differences is positive for all noun phrases (sorted in descending order)
+2. positive_docs_differences, files in which docs_differences is positive for all noun phrases (sorted in descending order)
+3. negative_phrases_differences, files in which phrase_differences is negative for all noun phrases (sorted in ascending order)
+4. negative_docs_differences, files in which docs_differences is negative for all noun phrases (sorted in ascending order)
