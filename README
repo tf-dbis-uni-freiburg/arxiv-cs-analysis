@@ -1,1 +1,38 @@
-This is a git repo
+PAPERSEARCH:
+
+A Search Engine built using Django, Solr and Python which gives the user the option to do a variety of searches on a set of research papers. These papers, 2 types of metadata, some citation information are all indexed and used for this process.
+
+The user can choose from the following 5 types of search. 
+The website for PaperSearch can be reached at http://132.230.150.9, which automatically redirects to http://132.230.150.9/searchengine/
+ 
+1.  Search for a word/phrase in the content of all the papers in the corpus.
+2.  Search by paper title and get author(s), publication date, arXiV, and dblp URLs.
+3.  Find papers which have been written by an author or a group of authors.
+4.  Search by title of cited papers, retrieve sentences in a (citing) paper which contain citations -- these citations are papers whose title is given in the search query.
+5.  Search by cited author(s), retrieve sentences in a (citing) paper which contain citations -- these citations are papers whose author(s) are given in the search query. 
+
+
+NOUN PHRASE VISUALIZATION
+
+PART 1:
+The monthly program is executed as follows:
+python3 nounphrase_visualization_monthly.py
+The development server runs on port 8050, so the following IP address (for the ‘Kilda’ machine which hosts the code) needs to be typed in the browser with port 8050.
+http://132.230.150.9:8050/
+
+The seearch query can be entered (mutiple noun phrases should be separated by commas). Two graphs: one for the  ‘Percentage of occurrences of chosen noun phrase(s) per Month’, and another for the ‘Percentage of papers containing chosen noun phrase(s) per Month’. Both the graphs are returned in the same webpage as soon as the Submit button
+is clicked. Phrases from the query which are not found are displayed above the graph. 
+If none of the phrases is found, no graph is displayed.
+
+PART 2:
+The yearly program is executed as follows:
+python3 nounphrase_visualization_yearly.py
+The development server runs on port 8050, so the following IP address (for the ‘Kilda’ machine which hosts the code) needs to be typed in the browser with port 8050.
+http://132.230.150.9:8050/
+
+The seearch query can be entered (mutiple noun phrases should be separated by commas). Two graphs: one for the  ‘Percentage of occurrences of chosen noun phrase(s) per Year, and another for the ‘Percentage of papers containing chosen noun phrase(s) per Year. Both the graphs are returned in the same webpage as soon as the Submit button
+is clicked. Phrases from the query which are not found are displayed above the graph. 
+If none of the phrases is found, no graph is displayed.
+
+A detailed explanation of the entire code (all modules) is available in 'Noun phrase Frequency Visualization.pdf'. The code itself has detailed documentation strings and
+inline comments.

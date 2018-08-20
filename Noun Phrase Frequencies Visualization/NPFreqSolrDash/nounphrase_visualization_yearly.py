@@ -1,8 +1,8 @@
-""" This module is used to visualize the monthly doc frequencies (no. of docs in which a phrase is present per month) and
-phrase frequencies (no. of times a phrase is present per month) of noun phrase(s) chosen by the user in a Dash user interface.
-A Solr query is made for the query/queries, results are aggregated monthly, and converted into percentage of phrases/docs in 
-the month by dividing by the total docs/phrases in each month (these are obtained from a json file built for that purpose in
-another module.	 """
+""" This module is used to visualize the yearly doc frequencies (no. of docs in which a phrase is present per year) and
+phrase frequencies (no. of times a phrase is present per year) of noun phrase(s) chosen by the user in a Dash user interface.
+A Solr query is made for the query/queries, results are aggregated yearly, and converted into percentage of phrases/docs in 
+the year by dividing by the total docs/phrases in each year (these are obtained from a json file built for that purpose in
+another module.  """
 import requests
 import sys
 import pandas as pd
@@ -75,15 +75,14 @@ def calculate_aggregates_day_wise(docs_df):
 def calculate_aggregates(docs_df):
     """ Takes a Pandas data frame with index=published_date, cols: num_occurrences and
     arxiv_identifier as input, calculates the no. of unique and total occurrences by
-    grouping by the month and year part of published_date and then calculating the count 
+    grouping by the year part of published_date, and then calculating the count 
     and sum based on the column num_occurrences. The aggregate results are suitably 
-    renamed and the published_date index is reset so that it becomes a column in the
-    output dataframe. 2 dataframes (unique counts and total counts) are returned.
+    renamed and 2 dataframes (unique counts and total counts) are returned.
     ARGUMENTS: docs_df, Pandas dataframe with index=published_date,
                columns=num_occurrences and arxiv_identifier
-    RETURNS: docs_df_total, a Pandas df grouped on published_date month and year, on
+    RETURNS: docs_df_total, a Pandas df grouped on published_date year, on
              which 'sum' is applied on num_occurrences.
-             docs_df_unique, a Pandas df grouped on published_date month and year, on
+             docs_df_unique, a Pandas df grouped on published_date year, on
              which 'count' is applied on num_occurrences.
              IMPORTANT: the returned dfs have sum and count in the same column called
                         num_occurrences, a new sum/count column is not created.
@@ -91,67 +90,66 @@ def calculate_aggregates(docs_df):
     # Drop arxiv_identifier, we want to group by the published_date index, and
     # aggregate on num_occurrrences.
     docs_df.drop('arxiv_identifier', axis=1, inplace=True)
-    # Dataframe 1 takes the sum of num_occurrences after grouping by month (and year)
-    docs_df_total = docs_df.groupby(pd.Grouper(freq='1M')).sum()
-    # docs_df_total.index has day as well, we keep only month and year
+    # Dataframe 1 takes the sum of num_occurrences after grouping by year
+    docs_df_total = docs_df.groupby(pd.Grouper(freq='1Y')).sum()
+    # docs_df_total.index has day as well, we keep only year
     # Change num_occurrences to int after replacing nan by 0
     docs_df_total.num_occurrences = docs_df_total.num_occurrences.fillna(0).astype('int64')
-    # Dataframe 2 takes the count of num_occurrences after grouping by month (and year)
-    # This is a monthly documnet frequency
-    docs_df_unique = docs_df.groupby(pd.Grouper(freq='1M')).count()
+    # Dataframe 2 takes the count of num_occurrences after grouping by year
+    # This is a yearly documnet frequency
+    docs_df_unique = docs_df.groupby(pd.Grouper(freq='1Y')).count()
     # Change num_occurrences to int after replacing nan by 0
     docs_df_unique.num_occurrences = docs_df_unique.num_occurrences.fillna(0).astype('int64')
     return docs_df_total, docs_df_unique
 
 def get_percentage_aggregates(docs_df_total, docs_df_unique):
-    """ This function takes 2 dataframes -- one has monthly phrase frequencies, the other has
-    monthly document frequencies -- and normalizes the values by dividing by total no. of phrases
-    in the corresponding months and total no. of documents in the corresponding month respectively
-    (and multiplies by 100) to get percentages 
-    ARGUMENTS: docs_df_total, a Pandas df grouped on published_date month and year, on
+    """ This function takes 2 dataframes -- one has yearly phrase frequencies, the other has
+    yearly document frequencies -- and normalizes the values by dividing by total no. of phrases
+    in the corresponding years and total no. of documents in the corresponding year respectively,
+    and multiplies by 100 to get percentages .
+    ARGUMENTS: docs_df_total, a Pandas df grouped on published_date year, on
              which 'sum' is applied on num_occurrences.
-             docs_df_unique, a Pandas df grouped on published_date month and year, on
+             docs_df_unique, a Pandas df grouped on published_date year, on
              which 'count' is applied on num_occurrences.
     RETURNS: docs_df_total, the data frame in the arguments with an additional field 'percentage_occurrences'
-             calculated by dividing the current value for each month by the no. of phrases in that month
+             calculated by dividing the current value for each year by the no. of phrases in that year
              docs_df_unique, the data frame in the arguments with an additional field 'percentage_occurrences'
-             calculated by dividing the current value for each month by the no. of docs in that month
-    NOTE: The total no. of docs/phrases in each month is present in a json file phrases_and_docs_monthly.json """
+             calculated by dividing the current value for each year by the no. of docs in that year
+    NOTE: The total no. of docs/phrases in each year is present in a json file phrases_and_docs_yearly.json """
     
-    # Read the Json file which has the monthly total phrases and documents -- 2 Json objects in a 
+    # Read the Json file which has the yearly total phrases and documents -- 2 Json objects in a 
     # json array. Assign each object to a dictionary.
-    with open('phrases_and_docs_monthly.json', 'r') as file:
+    with open('phrases_and_docs_yearly.json', 'r') as file:
         json_array= json.load(file)
     # json_array is a list of 2 dicts.
-    monthly_phrases_total = json_array[0]
-    monthly_docs_total = json_array[1]
-    # For each of the dataframes, create a monthyear column in the format year-month, e.g. 2017-08.
-    # This is a string and matches the value from the json file.
-    # Create monthyear column as a period object with frequency = every month
-    docs_df_total['monthyear'] = docs_df_total.index.to_period('M')
+    yearly_phrases_total = json_array[0]
+    yearly_docs_total = json_array[1]
+    # For each of the dataframes, create a year column.This is a string and matches the value from the json file.
+    # Create year column as a period object with frequency = every year
+    docs_df_total['year'] = docs_df_total.index.to_period('Y')
     # Convert the period object to a string
-    docs_df_total.monthyear =  docs_df_total.monthyear.astype('str')
-    # Create a new column which uses the value in the monthyear string column as a key in the monthly_phrases_total
-    # dict, and gets the corresponding value. The no. of occurrencesis divided by this number. The na_action is not
-    # strictly necessary, it is just a precaution which inserts NaN if a key (month+year) is not found. Finally, NaNs are
+    docs_df_total.year =  docs_df_total.year.astype('str')
+    # Create a new column which uses the value in the year string column as a key in the yearly_phrases_total
+    # dict, and gets the corresponding value. The no. of occurrences is divided by this number. The na_action is not
+    # strictly necessary, it is just a precaution which inserts NaN if a key (year) is not found. Finally, NaNs are
     # produced if the dict value has a 0 (divide by 0). These NaNs are replaced by 0. * 100 because the final result is in %.
-    docs_df_total['percentage_occurrences'] = (100 * docs_df_total.num_occurrences / docs_df_total['monthyear']
-        .map(monthly_phrases_total, na_action=None)).fillna(0)
+    docs_df_total['percentage_occurrences'] = (100 * docs_df_total.num_occurrences / docs_df_total['year']
+        .map(yearly_phrases_total, na_action=None)).fillna(0)
     # Repeat the process for docs_df_unique
-    docs_df_unique['monthyear'] = docs_df_unique.index.to_period('M')
+    docs_df_unique['year'] = docs_df_unique.index.to_period('Y')
     # Convert the period object to a string
-    docs_df_unique.monthyear =  docs_df_unique.monthyear.astype('str')
-    docs_df_unique['percentage_occurrences'] = (100 * docs_df_unique.num_occurrences / docs_df_unique['monthyear']
-        .map(monthly_docs_total, na_action=None)).fillna(0)
+    docs_df_unique.year =  docs_df_unique.year.astype('str')
+    docs_df_unique['percentage_occurrences'] = (100 * docs_df_unique.num_occurrences / docs_df_unique['year']
+        .map(yearly_docs_total, na_action=None)).fillna(0)
     return docs_df_total, docs_df_unique
 
 def get_aggregated_data(query):
     """ Function which returns an aggregated function for a valid query and
     None for an invalid one.
     ARGUMENTS: query, string, one of the parts of the user's comma-separated query
-    RETURNS: docs_df_total, a Pandas df grouped on published_date month and year, on
+    RETURNS: docs_df_total, a Pandas df grouped on published_date year, on
              which 'sum' is applied on num_occurrences and then normalized to get a percentage.
-             docs_df_unique, a Pandas df grouped on published_date month and year, on
+             docs_df_unique, a Pandas df grouped on published_date year, on
              which 'count' is applied on num_occurrences and then normalized to get a percentage.
     """
     # Get a list of dictinoaries by parsing the JSON results for the search query
@@ -231,9 +229,13 @@ def show_graph_total(n_clicks, input_box):
              Solr, error messages of all terms which don't have results from Solr."""
     
     # Store the layout with the appropriate title and y axis labels for the graph
+    # xticks should start from 2007, and subsequent ticks should be 12 months (1 year) apart. The range
+    # property makes sure there is a tick for 2007 and 2017 even if there is no data for those years.
+    # The values should be slightly before/after the first/last bar
     layout_total = go.Layout(
-                    title = 'Percentage of occurrences of chosen noun phrase(s) per Month',
-                    xaxis = {'title': 'Publication date', 'tickformat': '%b %y', 'tick0': '2007-04-30', 'dtick': 'M2'},
+                    title = 'Percentage of occurrences of chosen noun phrase(s) per Year',
+                    xaxis = {'title': 'Publication year', 'tickformat': '%Y', 'tick0': '2007-12-31',
+                             'dtick': 'M12', 'range': ['2007-07-01', '2018-07-01']},
                     yaxis = {'title': 'Percentage of phrase occurrences', 'ticksuffix': '%'},
                     plot_bgcolor = colours['background'],
                     paper_bgcolor = colours['background'],
@@ -304,9 +306,13 @@ def show_graph_unique(n_clicks, input_box):
     RETURNS: 1 graph (unique occurrences) of all terms which have results 
                from Solr """
     # Store the layout with the appropriate title and y axis labels for the graph
+    # xticks should start from 2007, and subsequent ticks should be 12 months (1 year) apart. The range
+    # property makes sure there is a tick for 2007 and 2017 even if there is no data for those years.
+    # The values should be slightly before/after the first/last bar
     layout_unique = go.Layout(
-                    title = 'Percentage of papers containing chosen noun phrase(s) per Month',
-                    xaxis = {'title': 'Publication date', 'tickformat': '%b %y', 'tick0': '2007-04-30', 'dtick': 'M2'},
+                    title = 'Percentage of papers containing chosen noun phrase(s) per Year',
+                    xaxis = {'title': 'Publication year', 'tickformat': '%Y', 'tick0': '2007-12-31',
+                            'dtick': 'M12', 'range': ['2007-07-01', '2018-07-01']},
                     yaxis = {'title': 'Percentage of papers with noun phrase', 'ticksuffix': '%'},
                     plot_bgcolor = colours['background'],
                     paper_bgcolor = colours['background'],
