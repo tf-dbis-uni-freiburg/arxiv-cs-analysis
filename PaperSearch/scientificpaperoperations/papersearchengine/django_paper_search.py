@@ -54,17 +54,7 @@ def search_sentences(query, num_rows):
             # res contains title, authors, url, arxiv_identifier, published_date (from arxiv_metadata) 
             # Note: authors and published_date are lists.
             title, authors, arxiv_url, arxiv_identifier, published_date = res_arxiv[0]
-            # Normalize the fields
-            if published_date is not None and published_date != []:
-                # Strip off timestamp (which solr returns with T00... after 10th character, and display in format March 25, 2018 instead
-                # of 2018-03-25). Finally, convert the list of dates into a string separated by semicolon and space
-                if len(published_date) == 1:
-                    published_date = '; '.join([datetime.datetime.strptime(date[:10], '%Y-%m-%d').strftime('%B %d, %Y') for  date in published_date])
-                else:
-                    published_date = '; '.join([datetime.datetime.strptime(date[:10], '%Y-%m-%d').strftime('%B %d, %Y') for  date in published_date]) + \
-                                     ' (multiple dates indicate revisions to the paper)'
-
-
+            # Normalize the fields except published_date, which is normalized later in Django views (as it should be sorted before normalizing)
             title = title if title != '' and title is not None else 'No title found for this result'
             authors = '; '.join(authors) if authors != [] and authors is not None else 'No author metadata found for this result'
             arxiv_url = arxiv_url if arxiv_url is not None and arxiv_url != '' else 'No arXiV URL found for this result'
@@ -73,7 +63,8 @@ def search_sentences(query, num_rows):
                 result.extend([title, authors, arxiv_url, published_date, None])
             else:
                 dblp_url = res_dblp[0][2] if res_dblp[0][2] != '' and res_dblp[0][2] is not None else None
-                result.extend([title, authors, arxiv_url, published_date, dblp_url])  
+                result.extend([title, authors, arxiv_url, published_date, dblp_url])
+    results.sort(key=lambda x: x[5][0], reverse=True)
     return results, query, num_rows, num_results
 
 def search_references(query, num_rows, search_type):
@@ -86,13 +77,13 @@ def search_references(query, num_rows, search_type):
     
     if search_type == 'title':
         # Return all rows to count no. of citations.
-        results, query, num_results = search_solr(query, 100000,
+        results, query, num_results = search_solr(query, 10000,
                                              'references', 'details',
                                              'proximity_title')
     
     if search_type == 'authors':
         # Return all rows to count no. of citations.
-        results, query, num_results = search_solr(query, 100000,
+        results, query, num_results = search_solr(query, 10000,
                                                  'references', 'details',
                                                  'proximity_authors')
     num_total_citations = len(results)
@@ -102,7 +93,7 @@ def search_references(query, num_rows, search_type):
     # is added into the dict.
     unique_citations = OrderedDict((result[0], result[1]) for result in results)
     num_unique_citations = len( unique_citations)
-    # Conver unique_citations back into a list -- a list of tuples so that we can slice it.
+    # Convert unique_citations back into a list -- a list of tuples so that we can slice it.
     unique_citations = list(unique_citations.items())
     # Keep only necessary number of citations based on num_rows (keep 5 citations extra, just in 
     # case). These many will be queried on papers (worst case). Generally, when a paper is
@@ -174,7 +165,7 @@ def search_references(query, num_rows, search_type):
             query)
 
 def search_authors(query, num_rows):
-    """ Returns all metadata (title, authors, urls) when names of 1 or more
+    """ Returns all metadata (title, authors, url) when names of 1 or more
     authors are given in the user query. """
     results, query, num_results = search_solr(query, num_rows,
                                              'arxiv_metadata', 'authors',
@@ -190,7 +181,9 @@ def search_authors(query, num_rows):
             # Also, the dblp_url may have no value (None or "") in the metadata file/index, check for this.
             dblp_url = dblp_url if dblp_url != '' and dblp_url is not None else None
             result.append(dblp_url)
-
+    # 5th element of the list is published_date, which might contain one or more dates (as strings with
+    # timestamp). Sort the whole list according to the first element of this date, i.e. result[4][0]
+    results.sort(key=lambda x: x[4][0], reverse=True)
     return results, num_results, num_rows
 
 def search_meta_titles(query, num_rows):
@@ -211,7 +204,7 @@ def search_meta_titles(query, num_rows):
             else:
                 dblp_url = res_dblp[0][2]
             result.append(dblp_url)
-
+    results.sort(key=lambda x: x[4][0], reverse=True)
     return results, num_results, num_rows
 
 def add_query_type(query, query_type):

@@ -55,32 +55,32 @@
 </h5>
 <div class="card-group">
 	<div class="row mb5">
-		{% for annotation, details, sentence, arxiv_identifier, title, authors, arxiv_url, published_date, dblp_url in results %}
-			<div class="col-4">
+		{% for annotation, details, sentence, arxiv_identifier, title, authors, arxiv_url, published_date, dblp_url, annotation_indices, before_annotation, after_annotation in results %}
+			<div class="col-12">
 				<div class="card mb-4 mt-3 teal darken-4 resultscard">
 					<div class="card-header #4fc3f7 text-white colour1">
 					{{forloop.counter}}. {{title}}
 					</div>
 					<!--Card content-->
 					<div class="card-body text-white teal darken-3">
-
      						<!--Title-->
    						<h5 class="card-title"> {{authors}} </h4>
       						<h6> {{published_date}} </h6>
-      						<p> {{sentence}} </p>
+      						<p> {{sentence|slice:before_annotation}} <span class="cyan accent-2 black-text"><em>{{sentence|slice:annotation_indices}}</em> </span>
+							{{sentence|slice:after_annotation}} </p>
+
 						<p> Cited paper details: {{details}}
 					</div>
        					<div class="card-footer text-muted teal darken-4 text-white">
       						<a href="{{arxiv_url}}" target="_blank">
-      						<img src="{% static 'papersearchengine/img/arxivlogo.png' %}" height="30" title="Visit this paper's page on arXiV." class="mr-5 pr-4" alt="arXiV.org"></a>
-      						{{arxiv_identifier}}
+      						<img src="{% static 'papersearchengine/img/arxivlogo.png' %}" height="30" title="Visit this paper's page on arXiV." class="float-left" alt="arXiV.org"></a>
 						{% if dblp_url %} 
 							<a href="{{dblp_url}}" target="_blank">
-     							<img src="{% static 'papersearchengine/img/dblplogo.png' %}" height="30" title="Visit this paper's page on dblp." class="ml-5 pl-4" alt="dblp"> </a>
+     							<img src="{% static 'papersearchengine/img/dblplogo.png' %}" height="30" title="Visit this paper's page on dblp." class="float-right" alt="dblp"> </a>
 						{% else %}
-     							<img src="{% static 'papersearchengine/img/dblplogo.png' %}" title="No dblp URL found for this result" height="30" class="ml-5 pl-4" alt="dblp"> </a>
+     							<img src="{% static 'papersearchengine/img/dblplogo.png' %}" title="No dblp URL found for this result" height="30" class="float-right" alt="dblp"> </a>
 						{% endif %}
-
+						<div class=text-center>{{arxiv_identifier}}</div>
 					</div>
 				</div>
 			</div>

@@ -204,7 +204,7 @@ def join_phrase_totals_to_df(joined_df, total_phrase_occurrences, total_docs_occ
 def write_to_files(positive_phrases_diff, negative_phrases_diff, positive_docs_diff, negative_docs_diff, subfolder):
     """ Writes the 4 dataframes in the arguments to four tsv files, all of which are inserted into a new subfolder
     (if it doesn't exist)."""
-    path_to_insert = "Output/SeptDec2007_2017/{}".format(subfolder)
+    path_to_insert = "Output/{}".format(subfolder)
     if not os.path.exists(path_to_insert):
         os.makedirs(path_to_insert)
     positive_phrases_diff.to_csv('{}/positive_phrases_differences.tsv'.format(path_to_insert), sep='\t')

@@ -1,3 +1,5 @@
+import datetime
+import re
 from django.shortcuts import render
 from django.http import HttpResponse, Http404, HttpResponseRedirect
 from .forms import SearchPapersForm, SearchCitedAuthorsForm, SearchCitedPaperForm, SearchAuthorsForm, SearchMetatitleForm
@@ -35,6 +37,7 @@ def phrase_search(request):
                 printdict = {'query': query, 'numresults': 0, 'results':[], 'numrows': numrows}
             else:
                 results, query, num_rows, num_results = reslist
+                results = normalize_date_phrase_search(results)
                 printdict = {'query': query, 'numresults': num_results, 'results':results, 'numrows': numrows}
 
             return render(request, 'papersearchengine/phrasesearchresults.html', 
@@ -115,18 +118,40 @@ def author_search(request):
      return render(request, 'papersearchengine/authorsearch.html', {'form':form})
 
 def normalize_results(results):
-    """ This func normalizes the published date and authors of metadata so that they are displayed in the right format,
-    and displays suitable messages if they are not found. """
+    """ This func normalizes the published date and authors of metadata so that they are displayed in the right format.
+    """
     for result in results:
         # authors is result[1] and published_date is result[4]
         result[1] = '; '.join(result[1])
-        # Strip off timestamp (which solr returns with T00... after 10th character, and display in formtat January 13, 2018 instead
+        # Strip off timestamp (which solr returns with T00... after 10th character, and display in format January 13, 2018 instead
         # of 2018-01-13). Finally, convert the list of dates into a string separated by semicolon and space
-        if len(result[4]) == 1:
-            result[4] = '; '.join([datetime.datetime.strptime(date[:10], '%Y-%m-%d').strftime('%B %d, %Y') for  date in result[4]])
+        if result[4] is not None and result[4] != []:
+            if len(result[4]) == 1:
+                result[4] = '; '.join([datetime.datetime.strptime(date[:10], '%Y-%m-%d').strftime('%B %d, %Y') for  date in result[4]])
+            else:
+                result[4] = '; '.join([datetime.datetime.strptime(date[:10], '%Y-%m-%d').strftime('%B %d, %Y') for  date in result[4]]) + \
+                            ' (multiple dates indicate revisions to the paper)'
         else:
-            result[4] = '; '.join([datetime.datetime.strptime(date[:10], '%Y-%m-%d').strftime('%B %d, %Y') for  date in result[4]]) + \
-                        ' (multiple dates indicate revisions to the paper)'
+            result[4] = 'No published date found for this result'
+    return results
+
+def normalize_date_phrase_search(results):
+    """ Normalizes the published date in the results for phrase search. """
+    for result in results:
+        published_date = result[5]
+        if published_date is not None and published_date != []:
+            # Strip off timestamp (which solr returns with T00... after 10th character, and display in format March 25, 2018 instead
+            # of 2018-03-25). Finally, convert the list of dates into a string separated by semicolon and space
+            if len(published_date) == 1:
+                print(published_date)
+                published_date = '; '.join([datetime.datetime.strptime(date[:10], '%Y-%m-%d').strftime('%B %d, %Y') for  date in published_date])
+            else:
+                print(published_date)
+                published_date = '; '.join([datetime.datetime.strptime(date[:10], '%Y-%m-%d').strftime('%B %d, %Y') for  date in published_date]) + \
+                                    ' (multiple dates indicate revisions to the paper)'
+        else:
+            published_date = 'No published date found for this result'
+        result[5] = published_date
     return results
 
 def cited_author_serach(request):
@@ -156,6 +181,7 @@ def cited_author_serach(request):
                  results, total_citations, unique_citations, num_rows, num_results, query = reslist
                  # Display only the query (remove the proximity symbol etc.)
                  query = query[:query.rfind('"')+1]
+                 results = normalize_citation_search(results)
                  printdict = {'query': query, 'totalcitations': total_citations, 'uniquecitations': unique_citations, 
                               'results':results, 'numrows': numrows, 'numresults': num_results}
 
@@ -189,11 +215,11 @@ def cited_paper_search(request):
                  # No results found
                  printdict = {'query': query, 'numresults': 0, 'results':[], 'numrows': numrows, 
                               'totalcitations': 0, 'uniquecitations': 0}
-
              else:
                  results, total_citations, unique_citations, num_rows, num_results, query = reslist
                  # Display only the query (remove the proximity symbol etc.)
                  query = query[:query.rfind('"')+1]
+                 results = normalize_citation_search(results)
                  printdict = {'query': query, 'totalcitations': total_citations, 'uniquecitations': unique_citations, 
                               'results':results, 'numrows': numrows, 'numresults': num_results}
 
@@ -203,3 +229,29 @@ def cited_paper_search(request):
          form=SearchCitedPaperForm()
      # Render empty form       
      return render(request, 'papersearchengine/citedpapersearch.html', {'form':form})
+
+def normalize_citation_search(results):
+    """ Normalizes the published date in the results for phrase search, highlights the annotation in the sentence by adding some html, 
+    which will be rendered when it is sent to the template. """
+    for result in results:
+        published_date = result[7]
+        if published_date is not None and published_date != []:
+            # Strip off timestamp (which solr returns with T00... after 10th character, and display in format March 25, 2018 instead
+            # of 2018-03-25). Finally, convert the list of dates into a string separated by semicolon and space
+            if len(published_date) == 1:
+                published_date = '; '.join([datetime.datetime.strptime(date[:10], '%Y-%m-%d').strftime('%B %d, %Y') for  date in published_date])
+            else:
+                published_date = '; '.join([datetime.datetime.strptime(date[:10], '%Y-%m-%d').strftime('%B %d, %Y') for  date in published_date]) + \
+                                    ' (multiple dates indicate revisions to the paper)'
+        else:
+            published_date = 'No published date found for this result'
+        result[7] = published_date
+        # Solr has removed the angular brackets in the annotation, put them back.
+        result[0] = "<{}>".format(result[0])
+        match = re.search(result[0], result[2])
+        # Create list with 3 elements: indices of annotation in sentence (separated by :), indices of the sentence before the annotation and
+        # indices of the sentence after the annotation, both also separated by a colon.
+        # It is sent to the template, where {{sentence|slice:annotation_indices}} is used to get the part to highlight the annotation. 
+        annotation_before_after = ["{}:{}".format(match.start(), match.end()), "{}:{}".format(0, match.start()), "{}:".format(match.end())]
+        result.extend(annotation_before_after)
+    return results

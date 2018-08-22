@@ -50,7 +50,7 @@
 <div class="card-group">
 	<div class="row mb5">
 		{% for title, authors, arxiv_url, arxiv_identifier, published_date, dblp_url in results %}
-			<div class="col-4">
+			<div class="col-12">
 				<div class="card mb-4 mt-3 teal darken-4 resultscard">
 					<div class="card-header #4fc3f7 text-white colour1">
 					<h5 class="card-title"> {{forloop.counter}}. {{title}} </h5>
@@ -64,15 +64,14 @@
 					</div>
        					<div class="card-footer text-muted teal darken-4 text-white">
       						<a href="{{arxiv_url}}" target="_blank">
-      						<img src="{% static 'papersearchengine/img/arxivlogo.png' %}" height="30" title="Visit this paper's page on arXiV." class="mr-5 pr-4" alt="arXiV.org"></a>
-      						{{arxiv_identifier}}
+      						<img src="{% static 'papersearchengine/img/arxivlogo.png' %}" height="30" title="Visit this paper's page on arXiV." class="float-left" alt="arXiV.org"></a>
 						{% if dblp_url %} 
 							<a href="{{dblp_url}}" target="_blank">
-     							<img src="{% static 'papersearchengine/img/dblplogo.png' %}" height="30" title="Visit this paper's page on dblp." class="ml-5 pl-4" alt="dblp"> </a>
+     							<img src="{% static 'papersearchengine/img/dblplogo.png' %}" height="30" title="Visit this paper's page on dblp." class="float-right" alt="dblp"> </a>
 						{% else %}
-     							<img src="{% static 'papersearchengine/img/dblplogo.png' %}" title="No dblp URL found for this result" height="30" class="ml-5 pl-4" alt="dblp"> </a>
+     							<img src="{% static 'papersearchengine/img/dblplogo.png' %}" title="No dblp URL found for this result" height="30" class="float-right" alt="dblp"> </a>
 						{% endif %}
-
+					<div class=text-center>{{arxiv_identifier}}</div>
 					</div>
 				</div>
 			</div>

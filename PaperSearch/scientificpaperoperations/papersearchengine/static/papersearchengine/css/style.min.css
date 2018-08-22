@@ -35,7 +35,7 @@ background: linear-gradient(90deg, rgba(168,228,154,0.9948354341736695) 4%, rgba
         display: flex;
 }
 
-.textcolou1{
+.textcolour1{
 	color:white;
 	font-size: 0.9rem;
     	font-weight: 400;
@@ -45,7 +45,7 @@ background: linear-gradient(90deg, rgba(168,228,154,0.9948354341736695) 4%, rgba
 	color: white;
 }
 
-colour2 {
+.colour2 {
 	background-color: #e0f2f1;
 	color: white;
 }
