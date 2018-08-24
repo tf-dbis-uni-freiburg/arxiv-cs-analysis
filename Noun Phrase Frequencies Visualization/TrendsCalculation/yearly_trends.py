@@ -44,8 +44,10 @@ def dataframe_from_solr_results(documents_list):
     RETURNS: docs_df, Pandas dataframe, the Solr results converted into a Pandas
              dataframe with index=published_date, columns=arxiv_identifier, num_occurrences"""
     docs_df = pd.DataFrame(documents_list)
-    # Remove any rows which have phrase starting with #
-    docs_df.drop(docs_df[docs_df['phrase'].str.startswith('#')].index, inplace=True)
+    # Remove any rows which have phrase starting with special characters
+    specialcharacters = ('|', '#', '*', '%', '@', '!', '~', '&', '>', '<', '\\', '/', '?', ';',
+                         ':', ']', '[', '}', '{', '(', ')', '_', '-', '=', '+', '^')
+    docs_df.drop(docs_df[docs_df['phrase'].str.startswith(specialcharacters)].index, inplace=True)
     # Also, drop all phrases which do not contain a character (phrases composed of numbers and
     # special characters only. E.g. 25%, 13, 8&26 will all be dropped)
     pattern = r'[a-z]'
@@ -137,7 +139,7 @@ def join_dfs_on_phrase(start_df, end_df, start_year):
     joined_df['doc_differences'] = joined_df['percentage_docs_2017'] - joined_df[start_percentage_docs_col]
     return joined_df
 
-def join_addtitional_dfs(joined_df, year_dataframe_dict):
+def join_additional_dfs(joined_df, year_dataframe_dict):
     """ Joins each of the dataframes in the year_dataframe_dict (dict with keys=years, values=dfs) with joined_df, which
     has percentage_occurrences and percentage_docs for one year (which is not in year_dataframe_dict, percentage_occurrences
     and percentage_docs for 2017, and 2 more columns phrase_differences, doc_differnces (differences in phrase freq and phrase
@@ -258,7 +260,7 @@ def main():
         # Reduce the dict to the years other than the year in the for loop and 2017
         other_years_dict = {other_year: df for other_year, df in year_dataframe_dict.items() if other_year not in ['2017', year]}
         # Join additional years doc differences as new columns
-        joined_df_enhanced = join_addtitional_dfs(joined_df, other_years_dict)
+        joined_df_enhanced = join_additional_dfs(joined_df, other_years_dict)
         # Calculate min and avg doc differences of each of the individual years' values, get back a dataframe without all these years'
         # columns save for the ones correspodning to 2017 and the current year in the for loop, but with addititonal columns for
         # min and mean doc differences instead.

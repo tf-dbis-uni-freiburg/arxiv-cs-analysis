@@ -130,7 +130,7 @@ def get_percentage_aggregates(docs_df_total, docs_df_unique):
     # Convert the period object to a string
     docs_df_total.year =  docs_df_total.year.astype('str')
     # Create a new column which uses the value in the year string column as a key in the yearly_phrases_total
-    # dict, and gets the corresponding value. The no. of occurrences is divided by this number. The na_action is not
+    # dict, and gets the corresponding value. The no. of occurrencesis divided by this number. The na_action is not
     # strictly necessary, it is just a precaution which inserts NaN if a key (year) is not found. Finally, NaNs are
     # produced if the dict value has a 0 (divide by 0). These NaNs are replaced by 0. * 100 because the final result is in %.
     docs_df_total['percentage_occurrences'] = (100 * docs_df_total.num_occurrences / docs_df_total['year']
@@ -229,9 +229,6 @@ def show_graph_total(n_clicks, input_box):
              Solr, error messages of all terms which don't have results from Solr."""
     
     # Store the layout with the appropriate title and y axis labels for the graph
-    # xticks should start from 2007, and subsequent ticks should be 12 months (1 year) apart. The range
-    # property makes sure there is a tick for 2007 and 2017 even if there is no data for those years.
-    # The values should be slightly before/after the first/last bar
     layout_total = go.Layout(
                     title = 'Percentage of occurrences of chosen noun phrase(s) per Year',
                     xaxis = {'title': 'Publication year', 'tickformat': '%Y', 'tick0': '2007-12-31',
@@ -306,9 +303,6 @@ def show_graph_unique(n_clicks, input_box):
     RETURNS: 1 graph (unique occurrences) of all terms which have results 
                from Solr """
     # Store the layout with the appropriate title and y axis labels for the graph
-    # xticks should start from 2007, and subsequent ticks should be 12 months (1 year) apart. The range
-    # property makes sure there is a tick for 2007 and 2017 even if there is no data for those years.
-    # The values should be slightly before/after the first/last bar
     layout_unique = go.Layout(
                     title = 'Percentage of papers containing chosen noun phrase(s) per Year',
                     xaxis = {'title': 'Publication year', 'tickformat': '%Y', 'tick0': '2007-12-31',

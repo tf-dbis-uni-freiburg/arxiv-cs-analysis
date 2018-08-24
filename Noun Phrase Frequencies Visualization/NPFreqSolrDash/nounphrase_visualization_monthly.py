@@ -231,9 +231,6 @@ def show_graph_total(n_clicks, input_box):
              Solr, error messages of all terms which don't have results from Solr."""
     
     # Store the layout with the appropriate title and y axis labels for the graph
-    # xticks should start from April 2007, and subsequent ticks should be 2 months apart. The range property
-    # makes sure there is a tick for April (and Dec 2017) even if there is no data for those months. The values
-    # should be slightly before/after
     layout_total = go.Layout(
                     title = 'Percentage of occurrences of chosen noun phrase(s) per Month',
                     xaxis = {'title': 'Publication date', 'tickformat': '%b %y', 'tick0': '2007-04-30',
@@ -308,9 +305,6 @@ def show_graph_unique(n_clicks, input_box):
     RETURNS: 1 graph (unique occurrences) of all terms which have results 
                from Solr """
     # Store the layout with the appropriate title and y axis labels for the graph
-    # xticks should start from April 2007, and subsequent ticks should be 2 months apart. The range property
-    # makes sure there is a tick for April (and Dec 2017) even if there is no data for those months. The values
-    # should be slightly before/after
     layout_unique = go.Layout(
                     title = 'Percentage of papers containing chosen noun phrase(s) per Month',
                     xaxis = {'title': 'Publication date', 'tickformat': '%b %y', 'tick0': '2007-04-30',

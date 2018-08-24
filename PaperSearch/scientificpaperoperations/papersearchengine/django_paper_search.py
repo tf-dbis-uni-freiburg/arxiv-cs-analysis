@@ -160,7 +160,7 @@ def search_references(query, num_rows, search_type):
                 for value in entry:
                     intermediate_result.append(value)
                 final_results.append(intermediate_result)
-                
+    final_results.sort(key=lambda x: x[7][0], reverse=True)
     return (final_results, num_total_citations, num_unique_citations, num_rows, result_counter,
             query)
 
