@@ -86,6 +86,12 @@ def remove_useless_phrases(docs_df):
     docs_df.drop(docs_df[~docs_df.index.str.contains(pattern)].index, inplace=True)
     return docs_df
 
+def normalize_dataframe(df):
+    """ Converts the total occurrences and total docs into percentages"""
+    df.total_occurrences = df.total_occurrences * 100 / df.total_occurrences.sum()
+    df.total_docs = df.total_docs * 100 / df.total_docs.sum()
+    return df
+
 def make_date_range_query(from_date, to_date):
     """ Forms a Solr date range query of form [from_date TO to_date] based on the
     values of from_date and to_date in the arguments."""
@@ -102,8 +108,9 @@ def grouped_dataframes_from_daterange(from_date, to_date):
     docs_df = dataframe_from_solr_results(docs)
     grouped_docs_df = group_by_phrase(docs_df)
     grouped_docs_df = remove_useless_phrases(grouped_docs_df)
-    grouped_docs_df.sort_values(by='total_occurrences', ascending=False, inplace=True)
-    return grouped_docs_df
+    normalized_df = normalize_dataframe(grouped_docs_df)
+    normalized_df.sort_values(by='total_occurrences', ascending=False, inplace=True)
+    return normalized_df
 
 def write_to_file(df, filename, subfolder):
     """ Writes a data frame into a file specified by 'filename' in the subfolder specified by 'subfolder'."""
