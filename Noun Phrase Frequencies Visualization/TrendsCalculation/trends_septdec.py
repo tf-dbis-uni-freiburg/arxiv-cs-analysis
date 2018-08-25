@@ -91,7 +91,6 @@ def get_counts_from_json(months_start, months_end):
     end_months_docs_sum = sum([monthly_docs_total.get(month) for month in months_end])
     return start_months_phrases_sum, start_months_docs_sum, end_months_phrases_sum, end_months_docs_sum
 
-
 def make_date_range_query(from_date, to_date):
     """ Forms a Solr date range query of form [from_date TO to_date] based on the
     values of from_date and to_date in the arguments."""

@@ -13,6 +13,7 @@ import copy
 import sys
 from collections import OrderedDict
 import datetime
+import pandas as pd
 
 def search_sentences(query, num_rows):
     """ Takes user's query as input, finds all sentences with the given
@@ -66,7 +67,7 @@ def search_sentences(query, num_rows):
                 result.extend([title, authors, arxiv_url, published_date, dblp_url])
     results.sort(key=lambda x: x[5][0], reverse=True)
     return results, query, num_rows, num_results
-
+                          
 def search_references(query, num_rows, search_type):
     """ Takes user's query as input, finds all references with the given
     author name/title, gets the local citation url and finds sentences in
@@ -77,30 +78,31 @@ def search_references(query, num_rows, search_type):
     
     if search_type == 'title':
         # Return all rows to count no. of citations.
-        results, query, num_results = search_solr(query, 10000,
+        results, query, num_results = search_solr(query, 100000,
                                              'references', 'details',
                                              'proximity_title')
     
     if search_type == 'authors':
         # Return all rows to count no. of citations.
-        results, query, num_results = search_solr(query, 10000,
+        results, query, num_results = search_solr(query, 100000,
                                                  'references', 'details',
                                                  'proximity_authors')
     num_total_citations = len(results)
+    if results == []:
+        return []
     # Create a dict of unique citations to be searched in the papers collection. 
-    # Use a dict comprehension (unique key: annotation, value: details. If the same
+    # Use an OrderedDict comprehension (unique key: annotation, value: details. If the same
     # annotation occurs different times with different details, only the fist 'details'
     # is added into the dict.
     unique_citations = OrderedDict((result[0], result[1]) for result in results)
     num_unique_citations = len( unique_citations)
     # Convert unique_citations back into a list -- a list of tuples so that we can slice it.
     unique_citations = list(unique_citations.items())
-    # Keep only necessary number of citations based on num_rows (keep 5 citations extra, just in 
-    # case). These many will be queried on papers (worst case). Generally, when a paper is
-    # cited more than once, all the unique citations may not be needed.
-    if num_rows < num_unique_citations:
-        unique_citations = unique_citations[:num_rows+5]
-    result_counter = 0
+    # Do not query all annotations in the papers index, keep only a max. of num_rows * 3
+    # unique citations. If num_rows * 3 is greater than the no. of unique citations, keep
+    # all the unique citations.
+    if num_rows * 3 < num_unique_citations:
+        unique_citations = unique_citations[:num_rows*3]
     final_results = []
     for annotation, details in unique_citations:
         reslist = search_sentences(annotation, num_rows)
@@ -108,61 +110,60 @@ def search_references(query, num_rows, search_type):
             # If the annotation was not found, go to next annotation
             continue
         res = reslist[0]
-        num_res = reslist[3]
-        # There are 3 possibilties as we iterate throught the annotations and find relevant 
-        # papers. We may be within the num_rows, we may exceed the no. of results, or we may
-        # land on the same number of results at the end of an iteration (on a particular annotation).
-        # The if, elif, else blocks handle these. Notice that the else block doesn't have a break
-        # to terminate it because we need more iterations (no. of results less than num_rows).
-        result_counter += num_res
-        if result_counter == num_rows:
-            # Append all the intermediate fields into intermediate results. This list will later be 
-            # the final_results list.
-            # Append all the fields like title, sentence, arxiv url etc. from papers
-            # and metadata/arxiv_metadata indexes
-            for entry in res:
-                # res is a list of lists -> entry is a list: extract values from entry
-                intermediate_result = []
-                intermediate_result.append(annotation)
-                intermediate_result.append(details)
-                # Values of 1 result: title, authors etc.
-                for value in entry:
-                    intermediate_result.append(value)
-                # Append the ith result to final_results: which contains full lists.
-                final_results.append(intermediate_result)
-            break
-        elif result_counter > num_rows:
-            # If appending results results in more rows than num_rows,
-            # reduce the no. of rows to append.
-            old_result_counter = result_counter - num_res
-            num_append_rows = num_rows - old_result_counter
-            res = res[:num_append_rows]
-            # Append all the fields like title, sentence, arxiv url etc. from papers
-            #and metadata/arxiv_metadata indexes
-            for entry in res:
-                # res is a list of lists -> entry is a list: extract values from entry
-                intermediate_result = []
-                intermediate_result.append(annotation)
-                intermediate_result.append(details)
-                for value in entry:
-                    intermediate_result.append(value)
-                # Append the ith result to final_results: which contains full lists.
-                final_results.append(intermediate_result)
-            break
+        # Append all the intermediate fields into intermediate results. This list will later be 
+        # the final_results list.
+        # Append all the fields like title, sentence, arxiv url etc. from papers
+        # and metadata/arxiv_metadata indexes
+        for entry in res:
+            # res is a list of lists -> entry is a list: extract values from entry
+            intermediate_result = []
+            intermediate_result.append(annotation)
+            intermediate_result.append(details)
+            # Values of 1 result: title, authors etc.
+            for value in entry:
+                intermediate_result.append(value)
+            # Append the current result to final_results. final_result contains full lists.
+            final_results.append(intermediate_result)
+    
+    final_results = flatten_dates_modify_annotations(final_results)
+    final_results = group_sentences_together(final_results)
+    result_counter = len(final_results)
+    final_results = final_results[:num_rows] 
+    final_results.sort(key=lambda x: x[7].split(';')[0], reverse=True)     
+    return (final_results, num_total_citations, num_unique_citations, num_rows, result_counter,query)
+
+def group_sentences_together(results):
+    """ Takes a list of lists of results which may include multiple sentences from the same CITING paper, and groups them
+    together in a list. The final list of lists which is returned will have fewer or equal results as the input list."""
+    # Convert the list of lists into a dataframe, replace missing values (Nones are converted into NaNs when a dataframe is created)
+    df=pd.DataFrame(results, columns=['annotation', 'details', 'sentence', 'arxiv_identifier', 'title', 'authors', 'arxiv_url', 'published_date', 'dblp_url'])
+    df['dblp_url'].fillna('dummy value', inplace=True)
+    df_grouped = pd.DataFrame(df.groupby(['arxiv_identifier', 'title', 'authors', 'arxiv_url',
+                                          'published_date', 'dblp_url', 'annotation', 'details'])['sentence'].apply(list)).reset_index()
+    # Reorder the columns
+    cols = ['annotation', 'details', 'sentence', 'arxiv_identifier', 'title', 'authors', 'arxiv_url', 'published_date', 'dblp_url']
+    df_grouped = df_grouped[cols]
+    grouped_list = df_grouped.values.tolist()
+    for result in grouped_list:
+        result[8] = None if result[8] == 'dummy value' else result[8]
+    return grouped_list
+
+def flatten_dates_modify_annotations(results):
+    """ Flattens the published_date list for all the results into as string in which multiple dates are separated by semicolons.
+    The date format is not changed, but the timestamp is removed. Angular brackets are added to the annotation as well for all 
+    the results. The results list is then returned."""
+    for result in results:
+        published_date = result[7]
+        if published_date is not None and published_date != []:
+            # Strip off timestamp (which solr returns with T00... after 10th character, and convert the list of dates into a string
+            # separated by semicolon.
+            published_date = ';'.join([datetime.datetime.strptime(date[:10], '%Y-%m-%d').strftime('%Y-%m-%d') for  date in published_date])
         else:
-            # Append all the fields like title, sentence, arxiv url etc. from papers
-            #and metadata/arxiv_metadata indexes
-            for entry in res:
-                # res is a list of lists -> entry is a list: extract values from entry
-                intermediate_result = []
-                intermediate_result.append(annotation)
-                intermediate_result.append(details)
-                for value in entry:
-                    intermediate_result.append(value)
-                final_results.append(intermediate_result)
-    final_results.sort(key=lambda x: x[7][0], reverse=True)
-    return (final_results, num_total_citations, num_unique_citations, num_rows, result_counter,
-            query)
+            published_date = 'No published date found for this result'
+        result[7] = published_date
+        # Solr has removed the angular brackets in the annotation, put them back.
+        result[0] = "<{}>".format(result[0])
+    return results
 
 def search_authors(query, num_rows):
     """ Returns all metadata (title, authors, url) when names of 1 or more

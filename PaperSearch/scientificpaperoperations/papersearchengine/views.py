@@ -181,10 +181,9 @@ def cited_author_serach(request):
                  results, total_citations, unique_citations, num_rows, num_results, query = reslist
                  # Display only the query (remove the proximity symbol etc.)
                  query = query[:query.rfind('"')+1]
-                 results = normalize_citation_search(results)
+                 results = change_dateformat_addoffsets_citation(results)
                  printdict = {'query': query, 'totalcitations': total_citations, 'uniquecitations': unique_citations, 
                               'results':results, 'numrows': numrows, 'numresults': num_results}
-
              return render(request, 'papersearchengine/citedauthorsearchresults.html', 
                            printdict)
      else:
@@ -219,39 +218,36 @@ def cited_paper_search(request):
                  results, total_citations, unique_citations, num_rows, num_results, query = reslist
                  # Display only the query (remove the proximity symbol etc.)
                  query = query[:query.rfind('"')+1]
-                 results = normalize_citation_search(results)
+                 results = change_dateformat_addoffsets_citation(results)
                  printdict = {'query': query, 'totalcitations': total_citations, 'uniquecitations': unique_citations, 
                               'results':results, 'numrows': numrows, 'numresults': num_results}
-
-             return render(request, 'papersearchengine/citedpapersearchresults.html', 
-                           printdict)
+             return render(request, 'papersearchengine/citedpapersearchresults.html', printdict)
      else:
          form=SearchCitedPaperForm()
      # Render empty form       
      return render(request, 'papersearchengine/citedpapersearch.html', {'form':form})
 
-def normalize_citation_search(results):
-    """ Normalizes the published date in the results for phrase search, highlights the annotation in the sentence by adding some html, 
-    which will be rendered when it is sent to the template. """
+def change_dateformat_addoffsets_citation(results):
+    """ Changes the date format for all the results from yyyy-mm-dd into Month dd, yyyy; """
     for result in results:
-        published_date = result[7]
-        if published_date is not None and published_date != []:
-            # Strip off timestamp (which solr returns with T00... after 10th character, and display in format March 25, 2018 instead
-            # of 2018-03-25). Finally, convert the list of dates into a string separated by semicolon and space
-            if len(published_date) == 1:
-                published_date = '; '.join([datetime.datetime.strptime(date[:10], '%Y-%m-%d').strftime('%B %d, %Y') for  date in published_date])
-            else:
-                published_date = '; '.join([datetime.datetime.strptime(date[:10], '%Y-%m-%d').strftime('%B %d, %Y') for  date in published_date]) + \
-                                    ' (multiple dates indicate revisions to the paper)'
+        published_date = result[7].split(';')
+        if len(published_date) == 1:
+            published_date = '; '.join([datetime.datetime.strptime(date[:10], '%Y-%m-%d').strftime('%B %d, %Y') for  date in published_date])
         else:
-            published_date = 'No published date found for this result'
+            published_date = '; '.join([datetime.datetime.strptime(date[:10], '%Y-%m-%d').strftime('%B %d, %Y') for  date in published_date]) +\
+                                       ' (multiple dates indicate revisions to the paper)'
         result[7] = published_date
-        # Solr has removed the angular brackets in the annotation, put them back.
-        result[0] = "<{}>".format(result[0])
-        match = re.search(result[0], result[2])
-        # Create list with 3 elements: indices of annotation in sentence (separated by :), indices of the sentence before the annotation and
-        # indices of the sentence after the annotation, both also separated by a colon.
-        # It is sent to the template, where {{sentence|slice:annotation_indices}} is used to get the part to highlight the annotation. 
-        annotation_before_after = ["{}:{}".format(match.start(), match.end()), "{}:{}".format(0, match.start()), "{}:".format(match.end())]
-        result.extend(annotation_before_after)
+        # Foll. list will be of the form [[sentence1, annotation_index, before_annotation_index, after_annotation_index], [sentence2,...],...]]
+        sentence_with_annotations = []
+        for sentence in result[2]:
+            # sublist will contain 1 sentence, and three sets of indeices 
+            sublist = []
+            match = re.search(result[0], sentence)
+            sublist.append(sentence)
+            # Find indices of annotation in sentence (separated by :), indices of the sentence before the annotation and
+            # indices of the sentence after the annotation, both also separated by a colon.
+            # This is used in the template, where {{sentence|slice:annotation_indices}} is used to get the part to highlight the annotation. 
+            sublist.extend(["{}:{}".format(match.start(), match.end()), "{}:{}".format(0, match.start()), "{}:".format(match.end())])
+            sentence_with_annotations.append(sublist)
+        result[2] = sentence_with_annotations
     return results

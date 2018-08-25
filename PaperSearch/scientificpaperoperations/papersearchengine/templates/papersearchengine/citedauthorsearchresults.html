@@ -31,20 +31,23 @@
 		
 		{% if numresults == 0 %}
 			Sorry, your query <strong> {{ query }} </strong> returned no results.
-		{% elif numresults < numrows %}
-			<strong> {{ totalcitations }} </strong> total citation{{totalcitations|pluralize}} and 
-			<strong> {{ uniquecitations }} </strong> total citation{{uniquecitations|pluralize}} were found for your search query, 
-			<strong> {{ query }} </strong>. The number of sentences containing these citations is {{ numresults }}. 
-			Note: The same citation may occur multiple times in one paper.
-			Displaying <strong> all {{ numresults }} </strong> result{{totalcitations|pluralize}}!
+		{% elif numresults <= numrows %}
+			<strong> {{ totalcitations }} </strong> total occurrence{{totalcitations|pluralize}} of your query,  
+			<strong> {{ query }}</strong>, were found in the citation details. Out of these, <strong> {{ uniquecitations}} </strong> were unique
+                        citation{{uniquecitations|pluralize}}.
+   			Note: When multiple sentences in a paper contain the same citation, they are grouped together under the
+			same result. <br/>
+			Displaying <strong> all {{ numresults }} </strong> paper{{totalcitations|pluralize}} which contain a
+ 			citation associated with your search query, {{ query }}.<br/>
 		{% else %}
-			<strong> {{ totalcitations}} </strong> total citation{{totalcitations|pluralize}} and 
-			<strong> {{ uniquecitations}} </strong> total citation{{uniquecitations|pluralize}} were found for your search query, 
-			<strong> {{ query }} </strong>. 
-			Note: The same citation may occur multiple times in one paper.
-			Displaying <strong>{{ numrows }} </strong> result{{totalcitations|pluralize}} (sentence{{totalcitations|pluralize}})!
+			<strong> {{ totalcitations }} </strong> total occurrence{{totalcitations|pluralize}} of your query,  
+			<strong> {{ query }}</strong>, were found in the citation details. Out of these, <strong> {{ uniquecitations}} </strong> were unique
+                        citation{{uniquecitations|pluralize}}.
+   			Note: When multiple sentences in a paper contain the same citation, they are grouped together under the
+			same result. <br/>
+			Displaying <strong>{{ numrows }} </strong> paper{{totalcitations|pluralize}} which contain a
+ 			citation associated with your search query, {{ query }}.<br/>
 		{% endif %}
-
 		<a href="/searchengine/citedauthorsearch" class="btn teal darken-2 btn-md text-white">Search again</a>
                 </div>
             </div>
@@ -55,7 +58,7 @@
 </h5>
 <div class="card-group">
 	<div class="row mb5">
-		{% for annotation, details, sentence, arxiv_identifier, title, authors, arxiv_url, published_date, dblp_url, annotation_indices, before_annotation, after_annotation in results %}
+		{% for annotation, details, sentence_list, arxiv_identifier, title, authors, arxiv_url, published_date, dblp_url in results %}
 			<div class="col-12">
 				<div class="card mb-4 mt-3 teal darken-4 resultscard">
 					<div class="card-header #4fc3f7 text-white colour1">
@@ -65,11 +68,23 @@
 					<div class="card-body text-white teal darken-3">
      						<!--Title-->
    						<h5 class="card-title"> {{authors}} </h4>
-      						<h6> {{published_date}} </h6> {{annotation_start}}
-      						<p> {{sentence|slice:before_annotation}} <span class="cyan accent-2 black-text"><em>{{sentence|slice:annotation_indices}}</em> </span>
-							{{sentence|slice:after_annotation}} </p>
-						<p> <strong>Cited paper details:</strong> {{details}}
+      						<h6> {{published_date}} </h6>
+						{% if sentence_list|length == 1 %}
+         						{% for sentence, annotation_indices, before_annotation_indices, after_annotation_indices in sentence_list %}
+							  <p> {{sentence|slice:before_annotation_indices}} 
+							  <span class="cyan accent-2 black-text">{{sentence|slice:annotation_indices}} </span>
+							  {{sentence|slice:after_annotation_indices}} </p>
+							{% endfor %}
+						{% else %}
+ 							{% for sentence, annotation_indices, before_annotation_indices, after_annotation_indices in sentence_list %}
+      							  <p> Hit {{forloop.counter}}: {{sentence|slice:before_annotation_indices}} 
+							  <span class="cyan accent-2 black-text">{{sentence|slice:annotation_indices}} </span>
+							  {{sentence|slice:after_annotation_indices}} <br/> </p>
+							{% endfor %}
+						{% endif %}
+						<p> <strong>Cited paper details</strong>: {{details}}
 					</div>
+
        					<div class="card-footer text-muted teal darken-4 text-white">
       						<a href="{{arxiv_url}}" target="_blank">
       						<img src="{% static 'papersearchengine/img/arxivlogo.png' %}" height="30" title="Visit this paper's page on arXiV." class="float-left" alt="arXiV.org"></a>
