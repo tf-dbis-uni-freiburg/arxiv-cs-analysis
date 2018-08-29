@@ -2,6 +2,7 @@
 {% load static %}
 {% block navlinks %}
 <ul class="navbar-nav mr-auto">
+
           <li class="nav-item">
               <a class="nav-link" href="/searchengine/phrasesearch">Phrase Search</a>
           </li>
@@ -19,34 +20,30 @@
               <span class="sr-only">(current)</span> 
           </li>
       </ul>
-
 {% endblock %}
-
 {% block content %}
-<div class="row">
-    <div class="col-md-12 pt-3">
+
+<div class="flex-row">
+    <div class="col-12 pt-3">
         <div class="card card-image colour1 mb-2">
             <div class="text-white text-center">
-                <div>
-		
+                <div>	
 		{% if numresults == 0 %}
 			Sorry, your query <strong> {{ query }} </strong> returned no results.
 		{% elif numresults <= numrows %}
-			<strong> {{ totalcitations }} </strong> total occurrence{{totalcitations|pluralize}} of your query,  
-			<strong> {{ query }}</strong>, were found in the citation details. Out of these, <strong> {{ uniquecitations}} </strong> were unique
-                        citation{{uniquecitations|pluralize}}.
-   			Note: When multiple sentences in a paper contain the same citation, they are grouped together under the
+			<strong> {{ uniquecitations }} </strong> unique cited paper{{uniquecitations|pluralize}} related to your query,  
+			<strong> {{ query }}</strong>, were found. <br/>
+   			<span class="small">Note: When multiple sentences in a paper contain the same citation, they are grouped together under the
 			same result. <br/>
-			Displaying <strong> all {{ numresults }} </strong> paper{{totalcitations|pluralize}} which contain a
- 			citation associated with your search query, {{ query }}.<br/>
+			<span class="small">Displaying <strong> all {{ numresults }} </strong> paper{{numresults|pluralize}} which contain a
+ 			citation associated with your search query, {{ query }}.</span><br/>
 		{% else %}
-			<strong> {{ totalcitations }} </strong> total occurrence{{totalcitations|pluralize}} of your query,  
-			<strong> {{ query }}</strong>, were found in the citation details. Out of these, <strong> {{ uniquecitations}} </strong> were unique
-                        citation{{uniquecitations|pluralize}}.
-   			Note: When multiple sentences in a paper contain the same citation, they are grouped together under the
+			<strong> {{ uniquecitations }} </strong> unique cited paper{{uniquecitations|pluralize}} related to your query,  
+			<strong> {{ query }}</strong>, were found. <br/>
+   			<span class="small"> Note: When multiple sentences in a paper contain the same citation, they are grouped together under the
 			same result. <br/>
-			Displaying <strong>{{ numrows }} </strong> paper{{totalcitations|pluralize}} which contain a
- 			citation associated with your search query, {{ query }}.<br/>
+			Displaying <strong>{{ numrows }} </strong> paper{{numrows|pluralize}} which contain a
+ 			citation associated with your search query, {{ query }}.  </span> <br/>
 		{% endif %}
 		<a href="/searchengine/citedauthorsearch" class="btn teal darken-2 btn-md text-white">Search again</a>
                 </div>
@@ -57,11 +54,11 @@
 
 </h5>
 <div class="card-group">
-	<div class="row mb5">
+	<div class="flex-row mb5">
 		{% for annotation, details, sentence_list, arxiv_identifier, title, authors, arxiv_url, published_date, dblp_url in results %}
 			<div class="col-12">
 				<div class="card mb-4 mt-3 teal darken-4 resultscard">
-					<div class="card-header #4fc3f7 text-white colour1">
+					<div class="card-header #text-white colour1">
 					<h5>{{forloop.counter}}. {{title}}</h5>
 					</div>
 					<!--Card content-->
@@ -102,4 +99,5 @@
 		{% endfor %}
 	</div>
 </div>
+
 {% endblock %}

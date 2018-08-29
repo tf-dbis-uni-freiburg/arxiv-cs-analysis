@@ -24,8 +24,8 @@
 {% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="col-md-12 pt-3">
+<div class="flex-row">
+    <div class="col-12 pt-3">
         <div class="card card-image colour1 mb-2">
             <div class="text-white text-center">
                 <div>
@@ -48,7 +48,7 @@
 
 </h5>
 <div class="card-group">
-	<div class="row mb5">
+	<div class="flex-row mb5">
 		{% for title, authors, arxiv_url, arxiv_identifier, published_date, dblp_url in results %}
 			<div class="col-12">
 				<div class="card mb-4 mt-3 teal darken-4 resultscard">
