@@ -14,6 +14,7 @@ import sys
 from collections import OrderedDict
 import datetime
 import pandas as pd
+from sklearn.externals import joblib
 
 def search_sentences(query, num_rows):
     """ Takes user's query as input, finds all sentences with the given
@@ -126,11 +127,31 @@ def search_references(query, num_rows, search_type):
             final_results.append(intermediate_result)
     
     final_results = flatten_dates_modify_annotations(final_results)
+    # Get sentiment
+    final_results = get_sentiment_from_model(final_results)
     final_results = group_sentences_together(final_results)
     result_counter = len(final_results)
     final_results = final_results[:num_rows] 
     final_results.sort(key=lambda x: x[7].split(';')[0], reverse=True)     
     return (final_results, num_total_citations, num_unique_citations, num_rows, result_counter,query)
+
+def get_sentiment_from_model(results):
+    """ Takes a list of lists of results, converts it into a df, and gets the citation polarity from a machine learning
+    (SGDClassifier) model learned previously. This is appended at the end of the sentence and the results are converted
+    back to the orig form and returned."""
+    # Convert the list of lists into a dataframe, replace missing values (Nones are converted into NaNs when a dataframe is created)
+    df=pd.DataFrame(results, columns=['annotation', 'details', 'sentence', 'arxiv_identifier', 'title', 'authors', 'arxiv_url', 'published_date', 'dblp_url'])
+    text_pipeline = joblib.load('papersearchengine/citation_model_pipeline.joblib')
+    df['sentiment'] = text_pipeline.predict(df.sentence)
+    # Map sentiment symbol to the actual sentiment
+    sentiment_mapping = {'o': ' (Predicted citation polarity: NEUTRAL)', 'n': ' (Predicted citation polarity: NEGATIVE',
+                         'p': ' (Predicted citation polarity: POSITIVE)'}
+    df['sentiment'] = df['sentiment'].map(sentiment_mapping)
+    # Concatenate the sentiment column to the end of the sentence column, and drop the sentiment column
+    df.sentence = df.sentence.str.cat(df.sentiment)
+    df = df.drop('sentiment', axis=1)
+    results_list = df.values.tolist()
+    return results_list
 
 def group_sentences_together(results):
     """ Takes a list of lists of results which may include multiple sentences from the same CITING paper, and groups them

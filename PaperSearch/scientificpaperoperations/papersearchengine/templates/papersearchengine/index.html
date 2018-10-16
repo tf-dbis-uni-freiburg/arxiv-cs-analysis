@@ -6,7 +6,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>Papers Search Engine</title>
+    <title>PaperSearch</title>
     {% load static %}
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -17,14 +17,15 @@
     <link href="{% static 'papersearchengine/css/mdb.min.css' %}" rel="stylesheet">
     <!-- Your custom styles (optional) -->
     <link href="{% static 'papersearchengine/css/style.min.css' %}" rel="stylesheet">
-  <style>
-  .trianglify{
+<style>
+.trianglify{
     background-image: url( "{% static 'papersearchengine/img/trianglifyBuGn.png' %}");
+    background-size: 100%;
   }
-  </style>
-</head>
+</style>
+  </head>
 
-<body class="trianglify">
+<body class="trianglify img-fluid">
 
 <header>
 <!--Navbar-->

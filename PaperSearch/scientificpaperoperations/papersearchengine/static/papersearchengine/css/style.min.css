@@ -8,7 +8,7 @@
 
 .trianglify{
     background-image: url( "{% static 'papersearchengine/img/trianglifyBuGn.png' %}");
-   }
+  }
 
 .lingrad{
 background: rgb(168,228,154);
@@ -48,4 +48,12 @@ background: linear-gradient(90deg, rgba(168,228,154,0.9948354341736695) 4%, rgba
 .colour2 {
 	background-color: #e0f2f1;
 	color: white;
+}
+
+.searchresults {
+        width: 100%;
+        display: flex;
+}
+.hideoverflow {
+        overflow: hidden;
 }

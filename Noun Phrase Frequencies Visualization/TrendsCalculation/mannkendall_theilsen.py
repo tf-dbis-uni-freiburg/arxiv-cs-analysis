@@ -1,4 +1,4 @@
-""" This module is used to create a data frame with all phrases which occur at lest 100 times in the whole corpus (the
+""" This module is used to create a data frame with all phrases which occur at least 100 times in the whole corpus (the
 common words which occur 50000 times or more are later discarded), gets the percentage of docs they occur in each
 year from 2007 to 2017, and if they occur in at least 3 of these years, calculates the Mann Kendall and Theil Sen
 statistics. These statistics calculate the strength of a trend, and 5 files are written to which have: 1. Positive
@@ -21,7 +21,7 @@ def get_total_df_from_pickles():
     frequency, removes phrases starting with special characters, and which don't contain a letter, and then joins
     the docs and total occurrences dataframes to produce one dataframe, which is returned."""
     total_phrase_occurrences = pd.read_pickle('Pickles/total_phrase_count_dataframe.pickle')
-    total_phrase_occurrences = total_phrase_occurrences[total_phrase_occurrences['num_occurrences']>100]
+    total_phrase_occurrences = total_phrase_occurrences[total_phrase_occurrences['num_occurrences']>200]
     #total_phrase_occurrences.sort_values(by='num_occurrences', ascending=False).head(10)
     total_doc_occurrences = pd.read_pickle('Pickles/total_doc_count_dataframe.pickle')
 
