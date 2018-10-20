@@ -135,13 +135,40 @@ def search_references(query, num_rows, search_type):
     final_results.sort(key=lambda x: x[7].split(';')[0], reverse=True)     
     return (final_results, num_total_citations, num_unique_citations, num_rows, result_counter,query)
 
+def read_polar_phrases():
+    """ Reads a file of positive/negative words, return 2 separate lists of positive and negative words resp."""
+    # Open positive and negative polarity list file.
+    polarity_df = pd.read_csv('polar_phrases.txt', sep='\t', names=['polar_word', 'polarity'])
+    #polarity_df.set_index('polar_word', inplace=True, drop=True)
+    negative_polarity_df = polarity_df[polarity_df.polarity==-1]
+    positive_polarity_df = polarity_df[polarity_df.polarity==1]
+    positive_polarity_words = polarity_df.polar_word.tolist()
+    negative_polarity_words = negative_polarity_df.polar_word.tolist()
+    return positive_polarity_words, negative_polarity_words
+
+def processing(df, positive_polarity_words, negative_polarity_words):
+    """ Does pre-processing on a dataframe"""
+    # Remove punctuation using re.sub(pattern, replace, input): \w: letter/num/underscore, \s: space. Also, make everything lowercase
+    df['processed'] = df['sentence'].apply(lambda x: re.sub(r'[^\w\s]', '', x.lower()))
+    
+    # Numerical features: these will need to be scaled in the pipeline
+    df['num_negative_words'] = df['processed'].apply(lambda sen: sum([1 if sen.find(word) != -1 else 0 for word in negative_polarity_words]))
+    df['num_positive_words'] = df['processed'].apply(lambda sen: sum([1 if sen.find(word) != -1 else 0 for word in positive_polarity_words]))
+    return df[['processed', 'num_negative_words', 'num_positive_words']]
+
 def get_sentiment_from_model(results):
     """ Takes a list of lists of results, converts it into a df, and gets the citation polarity from a machine learning
     (SGDClassifier) model learned previously. This is appended at the end of the sentence and the results are converted
     back to the orig form and returned."""
     # Convert the list of lists into a dataframe, replace missing values (Nones are converted into NaNs when a dataframe is created)
-    df=pd.DataFrame(results, columns=['annotation', 'details', 'sentence', 'arxiv_identifier', 'title', 'authors', 'arxiv_url', 'published_date', 'dblp_url'])
+    df = pd.DataFrame(results, columns=['annotation', 'details', 'sentence', 'arxiv_identifier', 'title', 'authors', 'arxiv_url', 'published_date', 'dblp_url'])
     text_pipeline = joblib.load('papersearchengine/citation_model_pipeline.joblib')
+    # Read the pipeline from the pickle (joblib)
+    #text_pipeline = joblib.load('papersearchengine/citation_model_pipeline_v2.joblib')
+    # Preprocess: add polar word (neg + pos) counts
+    #positive_polarity_words, negative_polarity_words = read_polar_phrases()
+    #df[['processed', 'num_negative_words', 'num_positive_words']] = processing(df.sentence, positive_polarity_words, negative_polarity_words)
+    #df['sentiment'] = text_pipeline.predict(df[['sentence', 'processed', 'num_negative_words', 'num_positive_words']])
     df['sentiment'] = text_pipeline.predict(df.sentence)
     # Map sentiment symbol to the actual sentiment
     sentiment_mapping = {'o': ' (Predicted citation polarity: NEUTRAL)', 'n': ' (Predicted citation polarity: NEGATIVE',

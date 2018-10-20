@@ -85,7 +85,6 @@ def main():
     calculate_holdoutset_metrics(y_train, y_test, y_pred, text_pipeline)
     # Pickle the model using joblib
     joblib.dump(text_pipeline, 'citation_model_pipeline.joblib')
-    return text_pipeline, y_pred, X_test, y_test, y_train
 
 if __name__ == '__main__':
     main()

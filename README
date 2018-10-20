@@ -36,3 +36,9 @@ If none of the phrases is found, no graph is displayed.
 
 A detailed explanation of the entire code (all modules) is available in 'Noun phrase Frequency Visualization.pdf'. The code itself has detailed documentation strings and
 inline comments.
+
+
+
+TRENDS CALCULATION:
+This consists of a disparate set of programs which are not directly dependent on each other, but sometimes use intermediate files genereated by each other. There are programs to calculate the yearly trends, the Mann Kendall and Theil-Sen statitics based on the yearly trends, programs to calcualte the 'difference between 2 years' and other miscellaneous programs.
+Many of these programs are included separately for noun phrases and entity mentions (wikipedia URLs of entities).

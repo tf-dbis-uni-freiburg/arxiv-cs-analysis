@@ -1,10 +1,10 @@
-""" This module is used to create a data frame with all phrases which occur at least 100 times in the whole corpus (the
+""" This module is used to create a data frame with all phrases which occur at lest 100 times in the whole corpus (the
 common words which occur 50000 times or more are later discarded), gets the percentage of docs they occur in each
 year from 2007 to 2017, and if they occur in at least 3 of these years, calculates the Mann Kendall and Theil Sen
 statistics. These statistics calculate the strength of a trend, and 5 files are written to which have: 1. Positive
-Mann-Kendall Z, 2. Negative Mann Kendall Z, 3. Non-Trending phrases by Mann-Kendall, 4. positive Theil Sen
+Mann-Kendall Z, 2. Negative Mann Kendall Z, 3. Non-Trending wiki urls by Mann-Kendall, 4. positive Theil Sen
 slope, 5. negative Theil Sen slope
-Note: it expects pickles produced by yearly_trends.py to be present"""
+Note: it expects pickles produced by yearly_wiki_pickle.py to be present"""
 
 import os
 import copy
@@ -20,33 +20,25 @@ def get_total_df_from_pickles():
     """ Reads pickle which contain all the phrases in the corpus and the no. of docs in which they occur/their total
     frequency, removes phrases starting with special characters, and which don't contain a letter, and then joins
     the docs and total occurrences dataframes to produce one dataframe, which is returned."""
-    total_phrase_occurrences = pd.read_pickle('Pickles/total_phrase_count_dataframe.pickle')
-    total_phrase_occurrences = total_phrase_occurrences[total_phrase_occurrences['num_occurrences']>200]
+    total_phrase_occurrences = pd.read_pickle('Pickles/wiki_phrase_count_dataframe.pickle')
+    #total_phrase_occurrences = total_phrase_occurrences[total_phrase_occurrences['num_occurrences']>100]
     #total_phrase_occurrences.sort_values(by='num_occurrences', ascending=False).head(10)
-    total_doc_occurrences = pd.read_pickle('Pickles/total_doc_count_dataframe.pickle')
+    total_doc_occurrences = pd.read_pickle('Pickles/wiki_doc_count_dataframe.pickle')
 
     #total_doc_occurrences.sort_values(by='num_documents', ascending=False).head(200)
     total_phrase_occurrences.rename(columns={'num_occurrences': 'total_occurrences'}, inplace=True)
     total_doc_occurrences.rename(columns={'num_documents': 'total_documents'}, inplace=True)
     joined_df = pd.merge(total_phrase_occurrences, total_doc_occurrences, how='inner', left_index=True, right_index=True)
-    joined_df = drop_useless_phrases(joined_df)
+    joined_df = drop_common_rare_phrases(joined_df)
     return joined_df
 
-def drop_useless_phrases(joined_df):
-    """ Takes the joined dataframe which contains all phrases with their total occurrences in the corpus, total no. of
-    docs in which they occur, and drops phrases which are common (>50000 total occurrences), or which start with a special
-    character. Rare phrases (less than 100 total occurrences) have already been removed. Returns smaller dataframe. """
-    # Drop all phrases which do not contain a character (phrases composed of numbers and
-    # special characters only. E.g. 25%, 13, 8&26 will all be dropped)
-    pattern = r'[a-z]'
-    # Use tilde for anything which doesn't match the pattern.
-    joined_df.drop(joined_df[~joined_df.index.str.contains(pattern)].index, inplace=True)
-    # Drop phrases which start with a special character
-    specialcharacters = ('|', '#', '*', '%', '@', '!', '~', '&', '>', '<', '\\', '/', '?', ';', ':', ']',
-                         '[', '}', '{', '(', ')', '_', '-', '=', '+', '^')
-    joined_df.drop(joined_df[joined_df.index.str.startswith(specialcharacters)].index, inplace=True)
-    # Drop rows which have total_occurrences greater than 50000: common words
-    joined_df.drop(joined_df[joined_df.total_occurrences>50000].index, inplace=True)
+def drop_common_rare_phrases(joined_df):
+    """ Takes the joined dataframe which contains all urls with their total occurrences in the corpus, total no. of
+    docs in which they occur, and drops urls which are common (>50000 total occurrences), or which start with a special
+    character. Rare urls (less than 200 total occurrences) are also removed. Returns smaller dataframe. """
+    # Drop rows which have total_occurrences greater than 50000: common urls
+    #joined_df.drop(joined_df[joined_df.total_occurrences>50000].index, inplace=True)
+    joined_df.drop(joined_df[joined_df.total_occurrences<100].index, inplace=True)
     return joined_df
 
 year_columns = ['percentage_docs_2007', 'percentage_docs_2008', 'percentage_docs_2009', 'percentage_docs_2010',
@@ -56,8 +48,8 @@ year_columns = ['percentage_docs_2007', 'percentage_docs_2008', 'percentage_docs
 def join_additional_dfs(joined_df, year_dataframe_dict):
     """ Joins each of the dataframes in the year_dataframe_dict (dict with keys=years, values=dfs) with joined_df, which
     has total_occurrences and total_docs of the phrases over the whole corpus. Some phrases have already been removed in
-    a previous step, so this is a reduced data frame. The 11 years' percentage occurrences for all the phrases are present in
-    year_dataframe_dict, and these are left joined to the joined datthe end (the % phrase frequency columns are removed) """
+    a previous step, so this is a reduced data frame. The 11 years' percentage docs for all the phrases are present in
+    year_dataframe_dict, and these are left joined  at the end (the % phrase frequency columns are removed) """
     # As dict is mutable, take a copy and work on that.
     other_years_dict = copy.deepcopy(year_dataframe_dict)
     for year, year_df in other_years_dict.items():
@@ -69,14 +61,14 @@ def join_additional_dfs(joined_df, year_dataframe_dict):
     joined_df.fillna(0, inplace=True)
     return joined_df
 
-def remove_more_phrases_and_sort(ready_for_stats_df, year_columns):
-    """ Sorts the df with 11 years' percentage occurrences, total and doc frequency in the whole corpus, and removes phrases which
+def remove_more_urls_and_sort(ready_for_stats_df, year_columns):
+    """ Sorts the df with 11 years' percentage occurrences, total and doc frequency in the whole corpus, and removes urls which
     have not occurred in at least 3 years. years_columns is a list with the column names for the 11 years. """
     # Min. no of years in which a phrase has to have occurred for it to be admitted to the final data set = 3
     min_years = 3
     # Drop all phrases which don't occur in at least 3 years
-    ready_for_stats_df.drop(ready_for_stats_df[ready_for_stats_df[year_columns].astype(bool).sum(axis=1)<=min_years].index, inplace=True)
-    ready_for_stats_df.sort_values(by='total_occurrences', ascending=False, inplace=True)
+    ready_for_stats_df.drop(ready_for_stats_df[ready_for_stats_df[year_columns].astype(bool).sum(axis=1)<min_years].index, inplace=True)
+    ready_for_stats_df = ready_for_stats_df.sort_values(by='total_occurrences', ascending=False)
     return ready_for_stats_df
 
 def findtheilsen(row):
@@ -146,21 +138,23 @@ def main():
                 'percentage_docs_2011', 'percentage_docs_2012', 'percentage_docs_2013', 'percentage_docs_2014',
                 'percentage_docs_2015', 'percentage_docs_2016', 'percentage_docs_2017']
     try:
-        ready_for_stats_df = pd.read_pickle('Pickles/ready_for_kendall_theil.pickle')
-        ready_for_stats_df = remove_more_phrases_and_sort(ready_for_stats_df, year_columns)
+        ready_for_stats_df = pd.read_pickle('Pickles/ready_for_kendall_theil_wiki.pickle')
+        print(ready_for_stats_df.head())
+        ready_for_stats_df = remove_more_urls_and_sort(ready_for_stats_df, year_columns)
         df_with_mannkendall = calculate_mannkendall_statistic(ready_for_stats_df, year_columns)
         df_with_theilsen_and_mk = calculate_theilsen_slope(df_with_mannkendall, year_columns)
+        print(df_with_theilsen_and_mk.head())
         # Split df into 4 dfs: ones with increasing and decreasing Theil Sen slope resp, and ones with increasing and decreasing
         # Mann-Kendall trend resp.
         increasing_mk, decreasing_mk, notrend_mk, positive_theilsen, negative_theilsen = create_sorted_stats_dfs(df_with_theilsen_and_mk)
         # Write to files
-        subfolder = 'mannkendall_and_theilsen'
+        subfolder = 'mannkendall_and_theilsen_wikipedia_DOCS'
         write_to_files(increasing_mk, decreasing_mk, notrend_mk, positive_theilsen, negative_theilsen, subfolder)
 
     except FileNotFoundError:
         # Pickle doesn't exist
         years = ['2007', '2008', '2009', '2010', '2011', '2012', '2013', '2014', '2015', '2016', '2017']
-        pickle_names = OrderedDict((year,'Pickles/'+ year + '_grouped_df.pickle') for year in years)
+        pickle_names = OrderedDict((year,'Pickles/'+ year + '_grouped_wiki_df.pickle') for year in years)
         year_dataframe_dict = OrderedDict()
         for year in years:
             year_df = pd.read_pickle(pickle_names.get(year))
@@ -169,15 +163,16 @@ def main():
         total_df = get_total_df_from_pickles()
         # Join to each of the yearly pickled dataframes
         ready_for_stats_df = join_additional_dfs(total_df, year_dataframe_dict)
-        pd.to_pickle(ready_for_stats_df, 'Pickles/ready_for_kendall_theil.pickle')
-        ready_for_stats_df = remove_more_phrases_and_sort(ready_for_stats_df, year_columns)
+        print(ready_for_stats_df.head())
+        pd.to_pickle(ready_for_stats_df, 'Pickles/ready_for_kendall_theil_wiki.pickle')
+        ready_for_stats_df = remove_more_urls_and_sort(ready_for_stats_df, year_columns)
         df_with_mannkendall = calculate_mannkendall_statistic(ready_for_stats_df, year_columns)
         df_with_theilsen_and_mk = calculate_theilsen_slope(df_with_mannkendall, year_columns)
         # Split df into 4 dfs: ones with increasing and decreasing Theil Sen slope resp, and ones with increasing and decreasing
         # Mann-Kendall trend resp.
         increasing_mk, decreasing_mk, notrend_mk, positive_theilsen, negative_theilsen = create_sorted_stats_dfs(df_with_theilsen_and_mk)
         # Write to files
-        subfolder = 'mannkendall_and_theilsen'
+        subfolder = 'mannkendall_and_theilsen_wikipedia_DOCS'
         write_to_files(increasing_mk, decreasing_mk, notrend_mk, positive_theilsen, negative_theilsen, subfolder)
 
 

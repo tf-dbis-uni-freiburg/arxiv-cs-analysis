@@ -112,26 +112,26 @@ def normalize_dataframes(grouped_df, year):
     grouped_df.drop(['total_occurrences', 'total_docs'], axis=1, inplace=True)
     return grouped_df
 
-def join_dfs_on_phrase(start_df, end_df, start_year):
+def join_dfs_on_wikipedia_url(start_df, end_df, start_year):
     """ Takes dataframes pertaining to the start year (2007-2016) and the end year (always 2017), both of which have
     already been grouped, and joins them on the index (phrase) using an inner join. It also creates 2 new
     columns by subtracting the  total and unique phrases in the start year's df from the corresponding values in the
-    end year's df. Both the dfs have the index 'phrase' and the columns 'percentage_occurrences' and 'percentage_docs'
-    The columns 'phrase_differences' and 'doc_differences' are added to the output."""
+    end year's df. Both the dfs have the index 'wikipedia_url' and the columns 'percentage_occurrences' and 'percentage_docs'
+    The columns 'total_occurrences_diff' and 'doc_differences' are added to the output."""
     start_year = '_{}'.format(start_year)
     joined_df = pd.merge(start_df, end_df, how='inner', left_index=True, right_index=True, suffixes=[start_year, '_2017'])
     # The column name for percentage occurrences and percentage docs for the start year should be stored for the later
     # subtractions.
     start_percentage_occurrences_col = 'percentage_occurrences{}'.format(start_year)
     start_percentage_docs_col = 'percentage_docs{}'.format(start_year)
-    joined_df['phrase_differences'] = joined_df['percentage_occurrences_2017'] - joined_df[start_percentage_occurrences_col]
+    joined_df['total_occurrences_diff'] = joined_df['percentage_occurrences_2017'] - joined_df[start_percentage_occurrences_col]
     joined_df['doc_differences'] = joined_df['percentage_docs_2017'] - joined_df[start_percentage_docs_col]
     return joined_df
 
 def join_additional_dfs(joined_df, year_dataframe_dict):
     """ Joins each of the dataframes in the year_dataframe_dict (dict with keys=years, values=dfs) with joined_df, which
     has percentage_occurrences and percentage_docs for one year (which is not in year_dataframe_dict, percentage_occurrences
-    and percentage_docs for 2017, and 2 more columns phrase_differences, doc_differnces (differences in phrase freq and phrase
+    and percentage_docs for 2017, and 2 more columns total_occurrences_diff, doc_differnces (differences in phrase freq and phrase
     doc freq between 2017 and that one year). Only the 9 years' (in year_dataframe_dict) % doc frequency columns are kept in
     the end (the % phrase frequency columns are removed) """
     # As dict is mutable, take a copy and work on that.
@@ -147,19 +147,19 @@ def join_additional_dfs(joined_df, year_dataframe_dict):
 def create_sorted_stats_dfs(joined_df):
     """ Takes a dataframe with phrase as index and percentage_occurrences_start, percentage_docs_start (start is a
     year, for e.g. percentage_occurrences_2007, percentage_docs_2007), percentage_occurrences_2017, percentage_docs_2017,
-    phrase_differences, doc_differences (2017-start for phrase count and doc count for each phrase), minyear (min. year count for
+    total_occurrences_diff, doc_differences (2017-start for phrase count and doc count for each phrase), minyear (min. year count for
     the phrase), avgyearcount (avg. over the years), and the totalcount over the whole period as columns, and
-    produces 4 dataframes: (i) phrases with positive phrase_differences (in descending order), (ii) phrases with negative
-     phrase_differences (in ascending order), (iii) phrases with postive doc_differences (in descending order), (iv) phrases
+    produces 4 dataframes: (i) phrases with positive total_occurrences_diff (in descending order), (ii) phrases with negative
+     total_occurrences_diff (in ascending order), (iii) phrases with postive doc_differences (in descending order), (iv) phrases
      with negative doc_differences (in ascending order).
-    Note that phrase_differences and doc_differences are expressed in percentages, and not whole numbers. Also, note
+    Note that total_occurrences_diff and doc_differences are expressed in percentages, and not whole numbers. Also, note
     that phrases which don't show a trend (0 difference) are not inserted into any of the 4 dataframes."""
 
-    positive_phrases_diff = joined_df[joined_df.phrase_differences>0]
-    positive_phrases_diff = positive_phrases_diff.sort_values(by='phrase_differences', ascending=False)
-    negative_phrases_diff = joined_df[joined_df.phrase_differences<0]
+    positive_phrases_diff = joined_df[joined_df.total_occurrences_diff>0]
+    positive_phrases_diff = positive_phrases_diff.sort_values(by='total_occurrences_diff', ascending=False)
+    negative_phrases_diff = joined_df[joined_df.total_occurrences_diff<0]
     # Ascending order for negative: we want high negative values to be first.
-    negative_phrases_diff = negative_phrases_diff.sort_values(by='phrase_differences')
+    negative_phrases_diff = negative_phrases_diff.sort_values(by='total_occurrences_diff')
     positive_docs_diff = joined_df[joined_df.doc_differences>0]
     positive_docs_diff = positive_docs_diff.sort_values(by='doc_differences', ascending=False)
     negative_docs_diff = joined_df[joined_df.doc_differences<0]
@@ -237,6 +237,28 @@ def main():
             # In this case, the get function on the dict will return None.
             if year_dataframe_dict.get(year) is None:
                 year_dataframe_dict[year] = year_df
+    # Read the pickles containing dataframes of the total phrase count of all phrases, and the total no. of docs
+    # in which they (all phrases) occur
+    total_phrase_occurrences = pd.read_pickle('Pickles/wiki_phrase_count_dataframe.pickle')
+    total_docs_occurrences = pd.read_pickle('Pickles/wiki_doc_count_dataframe.pickle')
+
+     # Join on the index (phrase) -- join the end year dataframe (always 2017) with each of the start years in turn
+    for year in years[:-1]:
+        # We don't want to include 2017, so loop is till -1.
+        joined_df = join_dfs_on_wikipedia_url(year_dataframe_dict.get(year), year_dataframe_dict.get('2017'), year)
+        # Reduce the dict to the years other than the year in the for loop and 2017
+        other_years_dict = {other_year: df for other_year, df in year_dataframe_dict.items() if other_year not in ['2017', year]}
+        # Join additional years doc differences as new columns
+        joined_df_enhanced = join_additional_dfs(joined_df, other_years_dict)
+        # Calculate min and avg doc differences of each of the individual years' values, get back a dataframe without all these years'
+        # columns save for the ones correspodning to 2017 and the current year in the for loop, but with addititonal columns for
+        # min and mean doc differences instead.
+        joined_with_meanmin_df = calc_mean_min_doc_diff(joined_df_enhanced, year)
+        joined_with_totals_df = join_phrase_totals_to_df(joined_with_meanmin_df, total_phrase_occurrences, total_docs_occurrences)
+        positive_phrases_diff, negative_phrases_diff, positive_docs_diff, negative_docs_diff = create_sorted_stats_dfs(joined_with_totals_df)
+        # Write the dataframes to 4 ouptut files in a subdirectory called 'subfolder' based on the current start year in the loop
+        subfolder = "WIKI_{}_2017".format(year)
+        write_to_files(positive_phrases_diff, negative_phrases_diff, positive_docs_diff, negative_docs_diff, subfolder)
 
 if __name__ == '__main__':
     main()
