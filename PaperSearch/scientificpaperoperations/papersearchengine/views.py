@@ -3,7 +3,7 @@ import re
 from django.shortcuts import render
 from django.http import HttpResponse, Http404, HttpResponseRedirect
 from .forms import SearchPapersForm, SearchCitedAuthorsForm, SearchCitedPaperForm, SearchAuthorsForm, SearchMetatitleForm
-from .django_paper_search import *
+from .django_paper_search_v2 import *
 
 # Create your views here.
 
@@ -29,7 +29,7 @@ def phrase_search(request):
             query = cleaned.get('query')
             numrows = cleaned.get('numrows')
             if numrows is None:
-                numrows = 10
+                numrows = 100
             # Render the search results form
             reslist = search_sentences(query, numrows)
             if reslist == []:
@@ -63,7 +63,7 @@ def metadatatitle_search(request):
              query = cleaned.get('query')
              numrows = cleaned.get('numrows')
              if numrows is None:
-                 numrows = 10
+                 numrows = 100
              results, num_results, num_rows = search_meta_titles(query, numrows)
              if results == []:
                  # No results found
@@ -95,7 +95,7 @@ def author_search(request):
              query = cleaned.get('query')
              numrows = cleaned.get('numrows')
              if numrows is None:
-                 numrows = 10
+                 numrows = 100
              # Split the query to individual authors and remove spaces and send the authors list to 
              # search_authors. 
              authors = query.split(';')
@@ -170,20 +170,18 @@ def cited_author_serach(request):
              query = cleaned.get('query')
              numrows = cleaned.get('numrows')
              if numrows is None:
-                 numrows = 10
+                 numrows = 100
              # Render the search results form
-             reslist = search_references(query, numrows, 'authors')
+             reslist = search_references_plus(query, numrows, 'authors')
              if reslist == []:
                  # No results found
-                 printdict = {'query': query, 'numresults': 0, 'results':[], 'numrows': numrows, 
-                              'totalcitations': 0, 'uniquecitations': 0}
+                 printdict = {'query': query, 'numresults': 0, 'results':[], 'numrows': numrows}
              else:
-                 results, total_citations, unique_citations, num_rows, num_results, query = reslist
+                 results, num_results, num_rows, query = reslist
                  # Display only the query (remove the proximity symbol etc.)
                  query = query[:query.rfind('"')+1]
-                 results = change_dateformat_addoffsets_citation(results)
-                 printdict = {'query': query, 'totalcitations': total_citations, 'uniquecitations': unique_citations, 
-                              'results':results, 'numrows': numrows, 'numresults': num_results}
+                 #results = addoffsets_citation(results)
+                 printdict = {'query': query, 'results':results, 'numrows': numrows, 'numresults': num_results}
              return render(request, 'papersearchengine/citedauthorsearchresults.html', 
                            printdict)
      else:
@@ -207,47 +205,20 @@ def cited_paper_search(request):
              query = cleaned.get('query')
              numrows = cleaned.get('numrows')
              if numrows is None:
-                 numrows = 10
+                 numrows = 100
              # Render the search results form
-             reslist = search_references(query, numrows, 'title')
+             reslist = search_references_plus(query, numrows, 'title')
              if reslist == []:
                  # No results found
-                 printdict = {'query': query, 'numresults': 0, 'results':[], 'numrows': numrows, 
-                              'totalcitations': 0, 'uniquecitations': 0}
+                 printdict = {'query': query, 'numresults': 0, 'results':[], 'numrows': numrows}
              else:
-                 results, total_citations, unique_citations, num_rows, num_results, query = reslist
+                 results, num_results, num_rows, query = reslist
                  # Display only the query (remove the proximity symbol etc.)
                  query = query[:query.rfind('"')+1]
-                 results = change_dateformat_addoffsets_citation(results)
-                 printdict = {'query': query, 'totalcitations': total_citations, 'uniquecitations': unique_citations, 
-                              'results':results, 'numrows': numrows, 'numresults': num_results}
+                 #results = addoffsets_citation(results)
+                 printdict = {'query': query, 'results':results, 'numrows': numrows, 'numresults': num_results}
              return render(request, 'papersearchengine/citedpapersearchresults.html', printdict)
      else:
          form=SearchCitedPaperForm()
      # Render empty form       
      return render(request, 'papersearchengine/citedpapersearch.html', {'form':form})
-
-def change_dateformat_addoffsets_citation(results):
-    """ Changes the date format for all the results from yyyy-mm-dd into Month dd, yyyy; """
-    for result in results:
-        published_date = result[7].split(';')
-        if len(published_date) == 1:
-            published_date = '; '.join([datetime.datetime.strptime(date[:10], '%Y-%m-%d').strftime('%B %d, %Y') for  date in published_date])
-        else:
-            published_date = '; '.join([datetime.datetime.strptime(date[:10], '%Y-%m-%d').strftime('%B %d, %Y') for  date in published_date]) +\
-                                       ' (multiple dates indicate revisions to the paper)'
-        result[7] = published_date
-        # Foll. list will be of the form [[sentence1, annotation_index, before_annotation_index, after_annotation_index], [sentence2,...],...]]
-        sentence_with_annotations = []
-        for sentence in result[2]:
-            # sublist will contain 1 sentence, and three sets of indeices 
-            sublist = []
-            match = re.search(result[0], sentence)
-            sublist.append(sentence)
-            # Find indices of annotation in sentence (separated by :), indices of the sentence before the annotation and
-            # indices of the sentence after the annotation, both also separated by a colon.
-            # This is used in the template, where {{sentence|slice:annotation_indices}} is used to get the part to highlight the annotation. 
-            sublist.extend(["{}:{}".format(match.start(), match.end()), "{}:{}".format(0, match.start()), "{}:".format(match.end())])
-            sentence_with_annotations.append(sublist)
-        result[2] = sentence_with_annotations
-    return results

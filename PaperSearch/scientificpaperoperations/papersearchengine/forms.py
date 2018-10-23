@@ -10,7 +10,7 @@ class SearchPapersForm(forms.Form):
     numrows = forms.IntegerField(required=False, min_value=1, max_value=1000, widget = forms.NumberInput(
     attrs={
          'class': 'form-control',
-         'placeholder': 'No. of results (default: 10)'
+         'placeholder': 'No. of results (default: 100)'
     }))
 
 class SearchCitedAuthorsForm(forms.Form):
@@ -23,7 +23,7 @@ class SearchCitedAuthorsForm(forms.Form):
     numrows = forms.IntegerField(required=False, min_value=1, max_value=1000, widget = forms.NumberInput(
     attrs={
          'class': 'form-control',
-         'placeholder': 'No. of results (default: 10)'
+         'placeholder': 'No. of results (default: 100)'
     }))
 
 class SearchCitedPaperForm(forms.Form):
@@ -36,7 +36,7 @@ class SearchCitedPaperForm(forms.Form):
     numrows = forms.IntegerField(required=False, min_value=1, max_value=1000, widget = forms.NumberInput(
     attrs={
          'class': 'form-control',
-         'placeholder': 'No. of results (default: 10)'
+         'placeholder': 'No. of results (default: 100)'
     }))
 
 class SearchMetatitleForm(forms.Form):
@@ -49,7 +49,7 @@ class SearchMetatitleForm(forms.Form):
     numrows = forms.IntegerField(required=False, min_value=1, max_value=1000, widget = forms.NumberInput(
     attrs={
          'class': 'form-control',
-         'placeholder': 'No. of results (default: 10)'
+         'placeholder': 'No. of results (default: 100)'
     }))
 
 class SearchAuthorsForm(forms.Form):
@@ -62,6 +62,6 @@ class SearchAuthorsForm(forms.Form):
     numrows = forms.IntegerField(required=False, min_value=1, max_value=1000, widget = forms.NumberInput(
     attrs={
          'class': 'form-control',
-         'placeholder': 'No. of results (default: 10)'
+         'placeholder': 'No. of results (default: 100)'
     }))
 

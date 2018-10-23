@@ -15,6 +15,7 @@ from collections import OrderedDict
 import datetime
 import pandas as pd
 from sklearn.externals import joblib
+import emoji
 
 def search_sentences(query, num_rows):
     """ Takes user's query as input, finds all sentences with the given
@@ -171,8 +172,11 @@ def get_sentiment_from_model(results):
     #df['sentiment'] = text_pipeline.predict(df[['sentence', 'processed', 'num_negative_words', 'num_positive_words']])
     df['sentiment'] = text_pipeline.predict(df.sentence)
     # Map sentiment symbol to the actual sentiment
-    sentiment_mapping = {'o': ' (Predicted citation polarity: NEUTRAL)', 'n': ' (Predicted citation polarity: NEGATIVE',
-                         'p': ' (Predicted citation polarity: POSITIVE)'}
+    # Map sentiment symbol to the actual sentiment
+    sentiment_mapping = {'o': emoji.emojize(' (:first_quarter_moon:)', use_aliases=True), 
+                         'n': emoji.emojize(' (:new_moon:)', use_aliases=True),
+                         'p': emoji.emojize(' (:full_moon:)', use_aliases=True)}
+
     df['sentiment'] = df['sentiment'].map(sentiment_mapping)
     # Concatenate the sentiment column to the end of the sentence column, and drop the sentiment column
     df.sentence = df.sentence.str.cat(df.sentiment)
