@@ -158,12 +158,12 @@ def get_sentiment_from_model(df):
     df['sentiment'] = text_pipeline.predict(df.citing_sentence)
     # Map sentiment symbol to the actual sentiment
     # Map sentiment symbol to the actual sentiment
-    sentiment_mapping = {'o': emoji.emojize(' (:first_quarter_moon:)', use_aliases=True), 
-                         'n': emoji.emojize(' (:new_moon:)', use_aliases=True),
-                         'p': emoji.emojize(' (:full_moon:)', use_aliases=True)}
-    #sentiment_mapping = {'o': emoji.emojize(' (:thumbsup:)', use_aliases=True), 
-    #                     'n': emoji.emojize(' (:thumbsdown:)', use_aliases=True),
-    #                     'p': emoji.emojize(' (:hand:)', use_aliases=True)}
+    #sentiment_mapping = {'o': emoji.emojize(' (:first_quarter_moon:)', use_aliases=True), 
+    #                     'n': emoji.emojize(' (:new_moon:)', use_aliases=True),
+    #                     'p': emoji.emojize(' (:full_moon:)', use_aliases=True)}
+    sentiment_mapping = {'o': emoji.emojize(' (:thumbsup:)', use_aliases=True), 
+                         'n': emoji.emojize(' (:thumbsdown:)', use_aliases=True),
+                         'p': emoji.emojize(' (:hand:)', use_aliases=True)}
     df['sentiment'] = df['sentiment'].map(sentiment_mapping)
     # Concatenate the sentiment column to the end of the sentence column, and drop the sentiment column
     df.citing_sentence = df.citing_sentence.str.cat(df.sentiment)
