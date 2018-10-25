@@ -55,9 +55,13 @@ def dataframe_from_solr_results(documents_list):
     # Change the published_date column from Solr's string timestamp format to a pandas
     # datetime object with just dates.
     docs_df.published_date = pd.to_datetime(docs_df.published_date)
+    # Remove March 2007 Data as it has only 2 documents, a phrase present in 2 will be present
+    # in 100% of the documents in the graph, and will destroy the scale.
+    docs_df = docs_df.drop(docs_df.loc[((docs_df.published_date.dt.month==3) & (docs_df.published_date.dt.year==2007))].index)
     # Make sure the published_date is the index. Once it is the index, we don't
     # really need the column any more.
     docs_df.set_index('published_date', inplace=True, drop=True)
+    
     return docs_df
 
 def calculate_aggregates_day_wise(docs_df):
@@ -210,7 +214,7 @@ def not_found_message(notfound_list):
     RETURNS: a html h5 message with a message listing the terms not found"""
     notfound_list = ['"' + term.strip().capitalize() + '"' 
                      for term in notfound_list]
-    notfound = ','.join(notfound_list)
+    notfound = ', '.join(notfound_list)
     return html.H5('Noun phrases not found: {}.'.format(notfound),
             style={'color': colours['text']}
             )
@@ -289,7 +293,7 @@ def show_graph_total(n_clicks, input_box):
                 return terms_not_found, dcc.Graph(id='totalfreq', figure= graph_total_terms)
                                         
             return html.Br(), dcc.Graph(id='totalfreq', figure= graph_total_terms)
-            
+
 """ Trigger callback to show graph for unique occurrences for all the comma-separated
 # search terms when n_clicks of the button is incremented """
 @app.callback(Output('output_unique', 'children'),
@@ -359,6 +363,148 @@ def show_graph_unique(n_clicks, input_box):
                 return dcc.Graph(id='uniquefreq', figure= graph_unique_terms)
                                         
             return html.Br(), dcc.Graph(id='uniquefreq', figure= graph_unique_terms)
+
+def show_graph_total_not_callback(n_clicks, input_box):
+    """ Function which is called by a wrapped function in another module. It 
+    takes user input in a text box, returns a graph if the query produces a hit in Solr, 
+    returns an error message otherwise.
+    ARGUMENTS: n_clicks: a parameter of the HTML button which indicates it has 
+               been clicked
+               input_box: the content of the text box in which the  user has 
+               entered a comma-separated search query.
+    RETURNS: 1 graph (total occurrences) of all terms which have results from 
+             Solr, error messages of all terms which don't have results from Solr."""
+    
+    # Store the layout with the appropriate title and y axis labels for the graph
+    layout_total = go.Layout(
+                    title = 'Percentage of occurrences of chosen noun phrase(s) per Month',
+                    xaxis = {'title': 'Publication date', 'tickformat': '%b %y', 'tick0': '2007-04-30',
+                             'dtick': 'M2', 'range': ['2007-03-25', '2018-01-25']},
+                    yaxis = {'title': 'Percentage of phrase occurrences', 'ticksuffix': '%'},
+                    plot_bgcolor = colours['background'],
+                    paper_bgcolor = colours['background'],
+                    barmode = 'stack',
+                    hovermode = 'closest',
+                    font= {
+                            'color': colours['text']
+                          },
+                    showlegend=True
+                    )
+    
+    if input_box != '':
+        # Get the input data: both freq_df dfs will have index= published_date,
+        # columns = percentage_occurrences total.
+        input_list = input_box.lower().split(',')
+        data_list_total = []
+        notfound_list = []
+        for input_val in input_list:
+            # Make sure to strip input_val, otherwise if the user enters a 
+            # space after the comma in the query, this space will get sent
+            # to Solr.
+            freq_df_total, freq_df_unique = get_aggregated_data(input_val.strip())
+            if freq_df_total is not None:
+                # Plot the graphs, published_date (index) goes on the x-axis,
+                # and percentage_occurrences total goes on the y-axis.
+                data_list_total.append(go.Bar(
+                                    x = freq_df_total.index,
+                                    y = freq_df_total.percentage_occurrences,
+                                    text = input_val.strip().capitalize(),
+                                    opacity = 0.7,
+                                    name = input_val.strip().capitalize()
+                                    ))
+
+            else:
+                # Term not found, append it to the not found list and go to the
+                # next term.
+                notfound_list.append(input_val)
+                
+        if data_list_total == []:
+            if notfound_list != []:
+                # Append the error message for the terms not found in the 
+                # Solr index
+                return not_found_message(notfound_list)
+             
+            # One or more of the Solr queries returned a result
+        else:
+            #graph_total_terms = {'data': data_list_total, 'layout': layout_total}
+            graph_total_terms = dict(data=data_list_total, layout=layout_total)
+            if notfound_list != []:
+                terms_not_found = not_found_message(notfound_list)
+                #return terms_not_found, html.Br(),
+                return terms_not_found, dcc.Graph(id='totalfreq', figure= graph_total_terms)
+                                        
+            return html.Br(), dcc.Graph(id='totalfreq', figure= graph_total_terms)
+
+def show_graph_unique_not_callback(n_clicks, input_box):
+    """ Normal function which is called by a wrapped function in another module. It
+    takes user input in a text box, returns a graph if the query produces a hit in Solr.
+    ARGUMENTS: n_clicks: a parameter of the HTML button which indicates it has 
+               been clicked
+               input_box: the content of the text box in which the  user has 
+               entered a comma-separated search query.
+    RETURNS: 1 graph (unique occurrences) of all terms which have results 
+               from Solr """
+    # Store the layout with the appropriate title and y axis labels for the graph
+    layout_unique = go.Layout(
+                    title = 'Percentage of papers containing chosen noun phrase(s) per Month',
+                    xaxis = {'title': 'Publication date', 'tickformat': '%b %y', 'tick0': '2007-04-30',
+                             'dtick': 'M2', 'range': ['2007-03-25', '2018-01-25']},
+                    yaxis = {'title': 'Percentage of papers with noun phrase', 'ticksuffix': '%'},
+                    plot_bgcolor = colours['background'],
+                    paper_bgcolor = colours['background'],
+                    barmode = 'stack',
+                    hovermode = 'closest',
+                    font= {
+                            'color': colours['text']
+                          },
+                    showlegend=True
+                    )
+    
+    if input_box != '':
+        # Get the input data: both freq_df dfs will have index= published_date,
+        # columns = percentage_occurrences unique.
+        input_list = input_box.lower().split(',')
+        data_list_unique = []
+        notfound_list = []
+        for input_val in input_list:
+            # Make sure to strip input_val, otherwise if the user enters a 
+            # space after the comma in the query, this space will get sent
+            # to Solr.
+            freq_df_total, freq_df_unique = get_aggregated_data(input_val.strip())
+            if freq_df_unique is not None:
+                # Plot the graphs, published_date (index) goes on the x-axis,
+                # and percentage_occurrences (unique) goes on the y-axis.
+                data_list_unique.append(go.Bar(
+                                    x = freq_df_unique.index,
+                                    y = freq_df_unique.percentage_occurrences,
+                                    text = input_val.strip().capitalize(),
+                                    opacity = 0.7,
+                                    name = input_val.strip().capitalize()
+                                    ))
+            else:
+                # Term not found, append it to the not found list and go to the
+                # next term.
+                notfound_list.append(input_val)
+                
+        if data_list_unique == []:
+            if notfound_list != []:
+                # Append the error message for the terms not found in the 
+                # Solr index
+                # NOTE: this is a change as it is called as the first graph
+                #return html.Br()
+                return not_found_message(notfound_list)
+             
+            # One or more of the Solr queries returned a result
+        else:
+            graph_unique_terms = {'data': data_list_unique, 'layout': layout_unique}
+            if notfound_list != []:
+                # This is also a change: terms_not_found is returned
+                terms_not_found = not_found_message(notfound_list)
+                return terms_not_found, dcc.Graph(id='uniquefreq', figure= graph_unique_terms)
+                                        
+            return html.Br(), dcc.Graph(id='uniquefreq', figure= graph_unique_terms)
+            
+
     
 if __name__ == '__main__':
     app.run_server(host='0.0.0.0')

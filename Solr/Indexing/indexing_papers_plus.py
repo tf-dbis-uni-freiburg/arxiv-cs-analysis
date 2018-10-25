@@ -141,9 +141,9 @@ def parse_file_build_index():
                             revision = ';'.join([datetime.datetime.strptime(pdate[:10], '%Y-%m-%d').strftime('%B %d, %Y') for pdate in published_dates[1:]])
                             solr_record['revision_dates'] = 'revised on {}'.format(revision)
                             #print(published_dates)
-                            solr_record['title'] = title
-                            solr_record['authors'] = '; '.join(authors)
-                            solr_record['arxiv_url'] = arxiv_url
+                        solr_record['title'] = title
+                        solr_record['authors'] = '; '.join(authors)
+                        solr_record['arxiv_url'] = arxiv_url
                     list_for_solr.append(solr_record)
             # Add to Solr after reading one file completely
             solr.add(list_for_solr)

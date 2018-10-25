@@ -3,20 +3,20 @@
 {% block navlinks %}
 <ul class="navbar-nav mr-auto">
           <li class="nav-item active">
-              <a class="nav-link" href="/searchengine/phrasesearch">Phrase Search</a>
+              <a class="nav-link" href="/searchengine/phrasesearch">Paper Given Phrase</a>
 	      <span class="sr-only">(current)</span>
           </li>
           <li class="nav-item">
-              <a class="nav-link" href="/searchengine/titlesearch">Get Metadata from title</a>
+              <a class="nav-link" href="/searchengine/titlesearch">Paper Given Paper's Title</a>
           </li>
           <li class="nav-item">
-              <a class="nav-link" href="/searchengine/authorsearch">Search by Author</a>
+              <a class="nav-link" href="/searchengine/authorsearch">Paper Given Author</a>
           </li>
           <li class="nav-item">
-              <a class="nav-link" href="/searchengine/citedpapersearch">Search by cited paper</a>
+              <a class="nav-link" href="/searchengine/citedpapersearch">Citation Contexts Given Cited Paper's Title</a>
           </li>
           <li class="nav-item">
-              <a class="nav-link" href="/searchengine/citedauthorsearch">Search by cited authors</a>
+              <a class="nav-link" href="/searchengine/citedauthorsearch">Citation Contexts Given Cited Paper's Author</a>
           </li>
 
       </ul>
@@ -51,12 +51,12 @@
 
 </h5>
 <div class="card-group">
-	<div class="flex-row mb5">
+	<div class="row mb5 pr-3 pl-3">
 		{% for sentence, arxiv_identifier, title, authors, arxiv_url, published_date, dblp_url in results %}
 			<div class="col-12">
 				<div class="card mb-4 mt-3 teal darken-4 resultscard">
 					<div class="card-header #4fc3f7 text-white colour1">
-					<h5 class="card-title"> <a href="{{arxiv_url}}" target="_blank" class="text-white">{{forloop.counter}}. {{title}} </a> </h5>
+					<h5 class="card-title"> <a href="{{arxiv_url}}" target="_blank" class="text-white"><u> {{forloop.counter}}. {{title}} </u> </a> </h5>
 					</div>
 					<!--Card content-->
 					<div class="card-body text-white teal darken-3">
@@ -74,7 +74,7 @@
 						{% else %}
      							<img src="{% static 'papersearchengine/img/dblplogo.png' %}" title="No dblp URL found for this result" height="30" class="float-right" alt="dblp"> </a>
 						{% endif %}
-					<div class=text-center>{{arxiv_identifier}}</div>
+					<div class=text-center>ArXiV and dblp links for {{arxiv_identifier}}</div>
 					</div>
 				</div>
 			</div>

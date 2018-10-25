@@ -1,8 +1,8 @@
-""" This module is used to visualize the yearly doc frequencies (no. of docs in which a phrase is present per year) and
-phrase frequencies (no. of times a phrase is present per year) of noun phrase(s) chosen by the user in a Dash user interface.
-A Solr query is made for the query/queries, results are aggregated yearly, and converted into percentage of phrases/docs in 
-the year by dividing by the total docs/phrases in each year (these are obtained from a json file built for that purpose in
-another module.  """
+""" This module is used to visualize the monthly doc frequencies (no. of docs in which a phrase is present per month) and
+phrase frequencies (no. of times a phrase is present per month) of noun phrase URL(s) chosen by the user in a Dash user interface.
+A Solr query is made for the query/queries, results are aggregated monthly, and converted into percentage of phrases/docs in 
+the month by dividing by the total docs/phrases in each month (these are obtained from a json file built for that purpose in
+another module.	 """
 import requests
 import sys
 import pandas as pd
@@ -50,11 +50,14 @@ def dataframe_from_solr_results(documents_list):
              dataframe with index=published_date, columns=arxiv_identifier, num_occurrences"""
     docs_df = pd.DataFrame(documents_list)
     # Remove phrase wikipedia url too, as all the rows will have the same value
-    # (the solr query field was wikipedia_url).
+    # (the solr query field was phrase).
     docs_df.drop(['_version_', 'id', 'wikipedia_url'], axis=1, inplace=True)
     # Change the published_date column from Solr's string timestamp format to a pandas
     # datetime object with just dates.
     docs_df.published_date = pd.to_datetime(docs_df.published_date)
+    # Remove March 2007 Data as it has only 2 documents, a phrase present in 2 will be present
+    # in 100% of the documents in the graph, and will destroy the scale.
+    docs_df = docs_df.drop(docs_df.loc[((docs_df.published_date.dt.month==3) & (docs_df.published_date.dt.year==2007))].index)
     # Make sure the published_date is the index. Once it is the index, we don't
     # really need the column any more.
     docs_df.set_index('published_date', inplace=True, drop=True)
@@ -75,14 +78,15 @@ def calculate_aggregates_day_wise(docs_df):
 def calculate_aggregates(docs_df):
     """ Takes a Pandas data frame with index=published_date, cols: num_occurrences and
     arxiv_identifier as input, calculates the no. of unique and total occurrences by
-    grouping by the year part of published_date, and then calculating the count 
+    grouping by the month and year part of published_date and then calculating the count 
     and sum based on the column num_occurrences. The aggregate results are suitably 
-    renamed and 2 dataframes (unique counts and total counts) are returned.
+    renamed and the published_date index is reset so that it becomes a column in the
+    output dataframe. 2 dataframes (unique counts and total counts) are returned.
     ARGUMENTS: docs_df, Pandas dataframe with index=published_date,
                columns=num_occurrences and arxiv_identifier
-    RETURNS: docs_df_total, a Pandas df grouped on published_date year, on
+    RETURNS: docs_df_total, a Pandas df grouped on published_date month and year, on
              which 'sum' is applied on num_occurrences.
-             docs_df_unique, a Pandas df grouped on published_date year, on
+             docs_df_unique, a Pandas df grouped on published_date month and year, on
              which 'count' is applied on num_occurrences.
              IMPORTANT: the returned dfs have sum and count in the same column called
                         num_occurrences, a new sum/count column is not created.
@@ -90,66 +94,67 @@ def calculate_aggregates(docs_df):
     # Drop arxiv_identifier, we want to group by the published_date index, and
     # aggregate on num_occurrrences.
     docs_df.drop('arxiv_identifier', axis=1, inplace=True)
-    # Dataframe 1 takes the sum of num_occurrences after grouping by year
-    docs_df_total = docs_df.groupby(pd.Grouper(freq='1Y')).sum()
-    # docs_df_total.index has day as well, we keep only year
+    # Dataframe 1 takes the sum of num_occurrences after grouping by month (and year)
+    docs_df_total = docs_df.groupby(pd.Grouper(freq='1M')).sum()
+    # docs_df_total.index has day as well, we keep only month and year
     # Change num_occurrences to int after replacing nan by 0
     docs_df_total.num_occurrences = docs_df_total.num_occurrences.fillna(0).astype('int64')
-    # Dataframe 2 takes the count of num_occurrences after grouping by year
-    # This is a yearly documnet frequency
-    docs_df_unique = docs_df.groupby(pd.Grouper(freq='1Y')).count()
+    # Dataframe 2 takes the count of num_occurrences after grouping by month (and year)
+    # This is a monthly documnet frequency
+    docs_df_unique = docs_df.groupby(pd.Grouper(freq='1M')).count()
     # Change num_occurrences to int after replacing nan by 0
     docs_df_unique.num_occurrences = docs_df_unique.num_occurrences.fillna(0).astype('int64')
     return docs_df_total, docs_df_unique
 
 def get_percentage_aggregates(docs_df_total, docs_df_unique):
-    """ This function takes 2 dataframes -- one has yearly phrase frequencies, the other has
-    yearly document frequencies -- and normalizes the values by dividing by total no. of phrases
-    in the corresponding years and total no. of documents in the corresponding year respectively,
-    and multiplies by 100 to get percentages .
-    ARGUMENTS: docs_df_total, a Pandas df grouped on published_date year, on
+    """ This function takes 2 dataframes -- one has monthly phrase frequencies, the other has
+    monthly document frequencies -- and normalizes the values by dividing by total no. of phrases
+    in the corresponding months and total no. of documents in the corresponding month respectively
+    (and multiplies by 100) to get percentages 
+    ARGUMENTS: docs_df_total, a Pandas df grouped on published_date month and year, on
              which 'sum' is applied on num_occurrences.
-             docs_df_unique, a Pandas df grouped on published_date year, on
+             docs_df_unique, a Pandas df grouped on published_date month and year, on
              which 'count' is applied on num_occurrences.
     RETURNS: docs_df_total, the data frame in the arguments with an additional field 'percentage_occurrences'
-             calculated by dividing the current value for each year by the no. of phrases in that year
+             calculated by dividing the current value for each month by the no. of phrases in that month
              docs_df_unique, the data frame in the arguments with an additional field 'percentage_occurrences'
-             calculated by dividing the current value for each year by the no. of docs in that year
-    NOTE: The total no. of docs/phrases in each year is present in a json file phrases_and_docs_yearly.json """
+             calculated by dividing the current value for each month by the no. of docs in that month
+    NOTE: The total no. of docs/phrases in each month is present in a json file phrases_and_docs_monthly.json """
     
-    # Read the Json file which has the yearly total phrases and documents -- 2 Json objects in a 
+    # Read the Json file which has the monthly total phrases and documents -- 2 Json objects in a 
     # json array. Assign each object to a dictionary.
-    with open('phrase_urls_and_docs_yearly.json', 'r') as file:
+    with open('phrase_urls_and_docs_monthly.json', 'r') as file:
         json_array= json.load(file)
     # json_array is a list of 2 dicts.
-    yearly_phrases_total = json_array[0]
-    yearly_docs_total = json_array[1]
-    # For each of the dataframes, create a year column.This is a string and matches the value from the json file.
-    # Create year column as a period object with frequency = every year
-    docs_df_total['year'] = docs_df_total.index.to_period('Y')
+    monthly_phrases_total = json_array[0]
+    monthly_docs_total = json_array[1]
+    # For each of the dataframes, create a monthyear column in the format year-month, e.g. 2017-08.
+    # This is a string and matches the value from the json file.
+    # Create monthyear column as a period object with frequency = every month
+    docs_df_total['monthyear'] = docs_df_total.index.to_period('M')
     # Convert the period object to a string
-    docs_df_total.year =  docs_df_total.year.astype('str')
-    # Create a new column which uses the value in the year string column as a key in the yearly_phrases_total
+    docs_df_total.monthyear =  docs_df_total.monthyear.astype('str')
+    # Create a new column which uses the value in the monthyear string column as a key in the monthly_phrases_total
     # dict, and gets the corresponding value. The no. of occurrencesis divided by this number. The na_action is not
-    # strictly necessary, it is just a precaution which inserts NaN if a key (year) is not found. Finally, NaNs are
+    # strictly necessary, it is just a precaution which inserts NaN if a key (month+year) is not found. Finally, NaNs are
     # produced if the dict value has a 0 (divide by 0). These NaNs are replaced by 0. * 100 because the final result is in %.
-    docs_df_total['percentage_occurrences'] = (100 * docs_df_total.num_occurrences / docs_df_total['year']
-        .map(yearly_phrases_total, na_action=None)).fillna(0)
+    docs_df_total['percentage_occurrences'] = (100 * docs_df_total.num_occurrences / docs_df_total['monthyear']
+        .map(monthly_phrases_total, na_action=None)).fillna(0)
     # Repeat the process for docs_df_unique
-    docs_df_unique['year'] = docs_df_unique.index.to_period('Y')
+    docs_df_unique['monthyear'] = docs_df_unique.index.to_period('M')
     # Convert the period object to a string
-    docs_df_unique.year =  docs_df_unique.year.astype('str')
-    docs_df_unique['percentage_occurrences'] = (100 * docs_df_unique.num_occurrences / docs_df_unique['year']
-        .map(yearly_docs_total, na_action=None)).fillna(0)
+    docs_df_unique.monthyear =  docs_df_unique.monthyear.astype('str')
+    docs_df_unique['percentage_occurrences'] = (100 * docs_df_unique.num_occurrences / docs_df_unique['monthyear']
+        .map(monthly_docs_total, na_action=None)).fillna(0)
     return docs_df_total, docs_df_unique
 
 def get_aggregated_data(query):
     """ Function which returns an aggregated function for a valid query and
     None for an invalid one.
     ARGUMENTS: query, string, one of the parts of the user's comma-separated query
-    RETURNS: docs_df_total, a Pandas df grouped on published_date year, on
+    RETURNS: docs_df_total, a Pandas df grouped on published_date month and year, on
              which 'sum' is applied on num_occurrences and then normalized to get a percentage.
-             docs_df_unique, a Pandas df grouped on published_date year, on
+             docs_df_unique, a Pandas df grouped on published_date month and year, on
              which 'count' is applied on num_occurrences and then normalized to get a percentage.
     """
     # Get a list of dictinoaries by parsing the JSON results for the search query
@@ -215,10 +220,12 @@ def not_found_message(notfound_list):
     RETURNS: a html h5 message with a message listing the terms not found"""
     notfound_list = ['"' + term.strip() + '"' 
                      for term in notfound_list]
-    notfound = ','.join(notfound_list)
-    return html.H5('Noun phrase URLs not found: {}.'.format(notfound),
+    notfound = ', '.join(notfound_list)
+    return html.H5('Entity mention(s) not found: {}.'.format(notfound),
             style={'color': colours['text']}
             )
+
+
     
 """ Trigger callback to show graph for total occurrences for all the comma-separated
 # search terms when n_clicks of the button is incremented """
@@ -237,10 +244,10 @@ def show_graph_total(n_clicks, input_box):
     
     # Store the layout with the appropriate title and y axis labels for the graph
     layout_total = go.Layout(
-                    title = 'Percentage of occurrences of chosen noun phrase URL(s) per Year',
-                    xaxis = {'title': 'Publication year', 'tickformat': '%Y', 'tick0': '2007-12-31',
-                             'dtick': 'M12', 'range': ['2007-07-01', '2018-07-01']},
-                    yaxis = {'title': 'Percentage of phrase URL occurrences', 'ticksuffix': '%'},
+                    title = 'Percentage of occurrences of chosen entity mention(s) per Month',
+                    xaxis = {'title': 'Publication date', 'tickformat': '%b %y', 'tick0': '2007-04-30',
+                             'dtick': 'M2', 'range': ['2007-03-25', '2018-01-25']},
+                    yaxis = {'title': 'Percentage of Entity mention occurrences', 'ticksuffix': '%'},
                     plot_bgcolor = colours['background'],
                     paper_bgcolor = colours['background'],
                     barmode = 'stack',
@@ -316,10 +323,10 @@ def show_graph_unique(n_clicks, input_box):
                from Solr """
     # Store the layout with the appropriate title and y axis labels for the graph
     layout_unique = go.Layout(
-                    title = 'Percentage of papers containing chosen noun phrase URL(s) per Year',
-                    xaxis = {'title': 'Publication year', 'tickformat': '%Y', 'tick0': '2007-12-31',
-                            'dtick': 'M12', 'range': ['2007-07-01', '2018-07-01']},
-                    yaxis = {'title': 'Percentage of papers with noun phrase URL', 'ticksuffix': '%'},
+                    title = 'Percentage of papers containing chosen entity mention(s) per Month',
+                    xaxis = {'title': 'Publication date', 'tickformat': '%b %y', 'tick0': '2007-04-30',
+                             'dtick': 'M2', 'range': ['2007-03-25', '2018-01-25']},
+                    yaxis = {'title': 'Percentage of papers with entity mention', 'ticksuffix': '%'},
                     plot_bgcolor = colours['background'],
                     paper_bgcolor = colours['background'],
                     barmode = 'stack',
@@ -352,9 +359,9 @@ def show_graph_unique(n_clicks, input_box):
                 data_list_unique.append(go.Bar(
                                     x = freq_df_unique.index,
                                     y = freq_df_unique.percentage_occurrences,
-                                    text = input_val.strip(),
+                                    text = input_val.strip(), # hover text
                                     opacity = 0.7,
-                                    name = input_val.strip()
+                                    name = input_val.strip() # legend text
                                     ))
             else:
                 # Term not found, append it to the not found list and go to the
@@ -374,6 +381,157 @@ def show_graph_unique(n_clicks, input_box):
                 return dcc.Graph(id='uniquefreq', figure= graph_unique_terms)
                                         
             return html.Br(), dcc.Graph(id='uniquefreq', figure= graph_unique_terms)
+
+def show_graph_total(n_clicks, input_box):
+    """ Function which is called by a wrapped function in another module. It takes
+     user input in a text box, returns a graph if the query produces a hit in Solr.
+     Returns an error message otherwise.
+    ARGUMENTS: n_clicks: a parameter of the HTML button which indicates it has 
+               been clicked
+               input_box: the content of the text box in which the  user has 
+               entered a comma-separated search query.
+    RETURNS: 1 graph (total occurrences) of all terms which have results from 
+             Solr, error messages of all terms which don't have results from Solr."""
+    
+    # Store the layout with the appropriate title and y axis labels for the graph
+    layout_total = go.Layout(
+                    title = 'Percentage of occurrences of chosen entity mention(s) per Month',
+                    xaxis = {'title': 'Publication date', 'tickformat': '%b %y', 'tick0': '2007-04-30',
+                             'dtick': 'M2', 'range': ['2007-03-25', '2018-01-25']},
+                    yaxis = {'title': 'Percentage of Entity mention occurrences', 'ticksuffix': '%'},
+                    plot_bgcolor = colours['background'],
+                    paper_bgcolor = colours['background'],
+                    barmode = 'stack',
+                    hovermode = 'closest',
+                    font= {
+                            'color': colours['text']
+                          },
+                    showlegend=True
+                    )
+    
+    if input_box != '':
+        # Get the input data: both freq_df dfs will have index= published_date,
+        # columns = percentage_occurrences total.
+        input_list = input_box.lower().split(',')
+        data_list_total = []
+        notfound_list = []
+        for input_val in input_list:
+            # Make sure to strip input_val, otherwise if the user enters a 
+            # space after the comma in the query, this space will get sent
+            # to Solr.
+            input_val = input_val.strip()
+            # If the search phrase doesn't start with the wikipedia url, it is a
+            # noun phrase which has to be converted to a URL
+            if not input_val.startswith('http://en.wikipedia.org/wiki'):
+                input_val = convert_phrase_to_url(input_val)
+            freq_df_total, freq_df_unique = get_aggregated_data(input_val)
+            if freq_df_total is not None:
+                # Plot the graphs, published_date (index) goes on the x-axis,
+                # and percentage_occurrences total goes on the y-axis.
+                data_list_total.append(go.Bar(
+                                    x = freq_df_total.index,
+                                    y = freq_df_total.percentage_occurrences,
+                                    text = input_val.strip(),
+                                    opacity = 0.7,
+                                    name = input_val.strip()
+                                    ))
+
+            else:
+                # Term not found, append it to the not found list and go to the
+                # next term.
+                notfound_list.append(input_val)
+                
+        if data_list_total == []:
+            if notfound_list != []:
+                # Append the error message for the terms not found in the 
+                # Solr index
+                return not_found_message(notfound_list)
+             
+            # One or more of the Solr queries returned a result
+        else:
+            #graph_total_terms = {'data': data_list_total, 'layout': layout_total}
+            graph_total_terms = dict(data=data_list_total, layout=layout_total)
+            if notfound_list != []:
+                terms_not_found = not_found_message(notfound_list)
+                #return terms_not_found, html.Br(),
+                return terms_not_found, dcc.Graph(id='totalfreq', figure= graph_total_terms)
+                                        
+            return html.Br(), dcc.Graph(id='totalfreq', figure= graph_total_terms)
+
+def show_graph_unique_not_callback(n_clicks, input_box):
+    """ Function which is called by a wrapped function in another module. It takes
+     user input in a text box, returns a graph if the query produces a hit in Solr.
+     Returns an error message otherwise.
+    ARGUMENTS: n_clicks: a parameter of the HTML button which indicates it has 
+               been clicked
+               input_box: the content of the text box in which the  user has 
+               entered a comma-separated search query.
+    RETURNS: 1 graph (unique occurrences) of all terms which have results 
+               from Solr """
+    # Store the layout with the appropriate title and y axis labels for the graph
+    layout_unique = go.Layout(
+                    title = 'Percentage of papers containing chosen entity mention(s) per Month',
+                    xaxis = {'title': 'Publication date', 'tickformat': '%b %y', 'tick0': '2007-04-30',
+                             'dtick': 'M2', 'range': ['2007-03-25', '2018-01-25']},
+                    yaxis = {'title': 'Percentage of papers with entity mention', 'ticksuffix': '%'},
+                    plot_bgcolor = colours['background'],
+                    paper_bgcolor = colours['background'],
+                    barmode = 'stack',
+                    hovermode = 'closest',
+                    font= {
+                            'color': colours['text']
+                          },
+                    showlegend=True
+                    )
+    
+    if input_box != '':
+        # Get the input data: both freq_df dfs will have index= published_date,
+        # columns = percentage_occurrences unique.
+        input_list = input_box.lower().split(',')
+        data_list_unique = []
+        notfound_list = []
+        for input_val in input_list:
+            # Make sure to strip input_val, otherwise if the user enters a 
+            # space after the comma in the query, this space will get sent
+            # to Solr.
+            input_val = input_val.strip()
+            # If the search phrase doesn't start with the wikipedia url, it is a
+            # noun phrase which has to be converted to a URL
+            if not input_val.startswith('http://en.wikipedia.org/wiki'):
+                input_val = convert_phrase_to_url(input_val)
+            freq_df_total, freq_df_unique = get_aggregated_data(input_val)
+            if freq_df_unique is not None:
+                # Plot the graphs, published_date (index) goes on the x-axis,
+                # and percentage_occurrences (unique) goes on the y-axis.
+                data_list_unique.append(go.Bar(
+                                    x = freq_df_unique.index,
+                                    y = freq_df_unique.percentage_occurrences,
+                                    text = input_val.strip(), # hover text
+                                    opacity = 0.7,
+                                    name = input_val.strip() # legend text
+                                    ))
+            else:
+                # Term not found, append it to the not found list and go to the
+                # next term.
+                notfound_list.append(input_val)
+                
+        if data_list_unique == []:
+            if notfound_list != []:
+                # Append the error message for the terms not found in the 
+                # Solr index
+                # return html.Br()
+                return not_found_message(notfound_list)
+             
+            # One or more of the Solr queries returned a result
+        else:
+            graph_unique_terms = {'data': data_list_unique, 'layout': layout_unique}
+            if notfound_list != []:
+                terms_not_found = not_found_message(notfound_list)
+                #return terms_not_found, html.Br(),
+                return terms_not_found, dcc.Graph(id='uniquefreq', figure= graph_unique_terms)
+                                        
+            return html.Br(), dcc.Graph(id='uniquefreq', figure= graph_unique_terms)
+
     
 if __name__ == '__main__':
-    app.run_server(host='0.0.0.0', port=8053)
+    app.run_server(host='0.0.0.0', port=8052)

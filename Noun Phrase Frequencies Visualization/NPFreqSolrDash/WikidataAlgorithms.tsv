@@ -1,0 +1,1611 @@
+Trachtenberg system
+Path tracing
+Viterbi algorithm
+collaborative filtering
+simplex algorithm
+General number field sieve
+Zassenhaus algorithm
+Time-based One-time Password Algorithm
+bubble sort
+Flooding algorithm
+PageRank
+Diffusing update algorithm
+genetic algorithm
+heuristic
+Cox–Zucker machine
+Euclidean algorithm
+Computus
+random forest
+Berkeley algorithm
+A-law algorithm
+Out-of-core algorithm
+Hungarian algorithm
+support vector machine
+Ford–Fulkerson algorithm
+Jenks natural breaks optimization
+μ-law algorithm
+Memetic algorithm
+symmetric-key algorithm
+supervised learning
+Shifting nth root algorithm
+Adam7 algorithm
+Knuth–Morris–Pratt algorithm
+Local outlier factor
+bitap algorithm
+QR algorithm
+middle-square method
+Prim's algorithm
+Gram-Schmidt process
+Sequitur algorithm
+Aitken's delta-squared process
+Levenshtein distance
+SIMPLE algorithm
+Christofides algorithm
+greedy algorithm
+CMA-ES
+Apriori algorithm
+CAST-128
+BKM algorithm
+Push–relabel maximum flow algorithm
+Crank–Nicolson method
+Mark-compact algorithm
+Liang–Barsky algorithm
+Quine–McCluskey algorithm
+MTD-f
+Binary GCD algorithm
+BCJR algorithm
+Special number field sieve
+Nagle's algorithm
+perceptron
+Todd–Coxeter algorithm
+Bully algorithm
+Yarrow algorithm
+Strassen algorithm
+Dinic's algorithm
+bidirectional search
+Online algorithm
+Kruskal's algorithm
+backtracking
+Cristian's algorithm
+Bootstrap aggregating
+Bailey–Borwein–Plouffe formula
+Baum–Welch algorithm
+Naive Bayes classifier
+Bayesian spam filtering
+Berlekamp's algorithm
+Berlekamp–Massey algorithm
+radix sort
+Kalman filter
+exponentiation by squaring
+Bluestein's FFT algorithm
+Blum–Micali algorithm
+branch and bound
+Configuration interaction
+Metropolis–Hastings algorithm
+Graham scan
+Luhn algorithm
+Painter's algorithm
+Shor's algorithm
+Pollard's rho algorithm
+God's algorithm
+CYK algorithm
+Fermat's factorization method
+Buchberger's algorithm
+C4.5 algorithm
+Deutsch–Jozsa algorithm
+Common Scrambling Algorithm
+HITS algorithm
+method of undetermined coefficients
+density functional theory
+Cayley–Purser algorithm
+Clenshaw algorithm
+British Museum algorithm
+K-nearest neighbor algorithm
+fast inverse square root
+parallel algorithm
+Cuthill–McKee algorithm
+Davis–Putnam algorithm
+De Casteljau's algorithm
+Gibbs sampling
+Newell's algorithm
+reduction
+shunting-yard algorithm
+Diamond-square algorithm
+Ramer–Douglas–Peucker algorithm
+SGI algorithm
+Chang and Roberts algorithm
+hebbian rule
+Ricart–Agrawala algorithm
+Edmonds–Karp algorithm
+Recursive descent parser
+Floyd–Steinberg dithering
+second quantization
+first quantization
+extended Euclidean algorithm
+nearest neighbour algorithm
+Risch algorithm
+Levenberg–Marquardt algorithm
+Least mean squares filter
+Unicode Segmentation Algorithm
+Borůvka's algorithm
+Goertzel algorithm
+Ostrich algorithm
+Unicode collation algorithm
+Gauss–Newton algorithm
+S/MIME
+Hopcroft–Karp algorithm
+Toom–Cook multiplication
+butterfly diagram
+Gutmann method
+Marr–Hildreth algorithm
+cycle detection
+Maze solving algorithm
+Hilltop algorithm
+Hirschberg's algorithm
+ID3 algorithm
+Johnson's rule
+Jacobi eigenvalue algorithm
+Smith–Waterman algorithm
+Lenstra–Lenstra–Lovász lattice basis reduction algorithm
+Roberts algorithm
+Line drawing algorithm
+KSTEM
+Edmonds' algorithm
+Pohlig–Hellman algorithm
+Collocation method
+NTRUSign
+Sutherland–Hodgman algorithm
+Marching cubes
+Markov algorithm
+Pollard's kangaroo algorithm
+Cohen–Sutherland algorithm
+Tomasulo algorithm
+Pollard's p − 1 algorithm
+Schönhage–Strassen algorithm
+Null encryption
+Secure Hash Algorithm 2
+Tarjan's strongly connected components algorithm
+Solitaire
+Rete algorithm
+Odds algorithm
+Frank–Wolfe algorithm
+Chan's algorithm
+Bron–Kerbosch algorithm
+XTR
+Zeller's congruence
+Chudnovsky algorithm
+Karmarkar's algorithm
+Chandy-Lamport Algorithm
+Great Deluge algorithm
+Johnson's algorithm
+sweep line algorithm
+EdgeRank
+topology optimization
+Unicode Line Breaking Algorithm
+Odlyzko–Schönhage algorithm
+Warnock algorithm
+method of the second derivative
+Weiler–Atherton clipping algorithm
+Wolff algorithm
+quantum algorithm
+Kosaraju's algorithm
+Lenstra elliptic curve factorization
+Linear classifier
+AdaBoost
+Quantum phase estimation algorithm
+Clarke & Wright's savings algorithm
+Cantor–Zassenhaus algorithm
+Cannon's algorithm
+Fürer's algorithm
+Coppersmith–Winograd algorithm
+Knuth–Bendix completion algorithm
+Lloyd's algorithm
+Wagner–Fischer algorithm
+Remez algorithm
+Schoof's algorithm
+Nth root algorithm
+Block-matching algorithm
+Streaming algorithm
+Top-nodes algorithm
+Xiaolin Wu's line algorithm
+Estimation of distribution algorithm
+BFGS method
+Ziggurat algorithm
+Rabin signature algorithm
+Maze generation algorithm
+Algorithm design
+Random naive Bayes
+Kahan summation algorithm
+Gift wrapping algorithm
+Cholesky decomposition
+Gran plot
+Pigeonhole sort
+selection algorithm
+Patience sorting
+SSS*
+Library sort
+Bees algorithm
+BLEU
+Division algorithm
+Ada Lovelace’ algorithm for computing Bernoulli numbers
+Median of medians
+Midpoint circle algorithm
+Quickselect
+FNAm2
+HMAC-based One-time Password Algorithm
+LL(1)
+LR(0)
+MOSQUITO
+Williams' p + 1 algorithm
+Pollard's rho algorithm for logarithms
+Verhoeff algorithm
+Bentley–Ottmann algorithm
+Boyer–Moore–Horspool algorithm
+Gilbert–Johnson–Keerthi distance algorithm
+Kirkpatrick–Seidel algorithm
+Lubachevsky–Stillinger algorithm
+belief propagation
+3-opt
+Adaptive-additive algorithm
+Addition-chain exponentiation
+Adleman–Pomerance–Rumely primality test
+Algebraic-group factorisation algorithm
+Algorithms for calculating variance
+Alpha algorithm
+Alpha max plus beta min algorithm
+Apostolico–Giancarlo algorithm
+Approximate counting algorithm
+Artificial bee colony algorithm
+Astronomical algorithm
+Auction algorithm
+BHHH algorithm
+BLS
+BRST algorithm
+Bach's algorithm
+Backfitting algorithm
+Bareiss algorithm
+Bat algorithm
+Batcher odd–even mergesort
+Bayesian inference using Gibbs sampling
+Bayesian tool for methylation analysis
+Beeman's algorithm
+Beier–Neely morphing algorithm
+Benson's algorithm
+Berendsen thermostat
+Berlekamp–Zassenhaus algorithm
+Berlekamp–Welch algorithm
+Bitonic sorter
+Tarjan's off-line least common ancestors algorithm
+Reverse-delete algorithm
+Block Lanczos algorithm for nullspace of a matrix over a finite field
+Block Wiedemann algorithm
+Bowyer–Watson algorithm
+Bruun's FFT algorithm
+Bulirsch–Stoer algorithm
+Burstsort
+Buzen's algorithm
+C-Link
+CJCSG
+CLEAN
+CN2 algorithm
+CONQUEST
+Cascade algorithm
+Cellular evolutionary algorithm
+Chaff algorithm
+Chaitin's algorithm
+Chandra–Toueg consensus algorithm
+Cheney's algorithm
+Chew's second algorithm
+Chien search
+Cipolla's algorithm
+Client Puzzle Protocol
+Coffman–Graham algorithm
+Commentz-Walter algorithm
+Condensation algorithm
+Cone algorithm
+Consistent Overhead Byte Stuffing
+Constraint algorithm
+Convex hull algorithms
+Cooley–Tukey FFT algorithm
+Cornacchia's algorithm
+Covariance intersection
+Cultural algorithm
+Cycle sort
+Cyrus–Beck algorithm
+Damm algorithm
+Day–Stout–Warren algorithm
+De Boor's algorithm
+Difference-map algorithm
+Dijkstra–Scholten algorithm
+Divide-and-conquer eigenvalue algorithm
+Super-recursive algorithm
+Drizzle
+Dykstra's projection algorithm
+Edge disjoint shortest pair algorithm
+Elston–Stewart algorithm
+Expected linear time MST algorithm
+FKT algorithm
+FNN algorithm
+FastContact
+Fast folding algorithm
+Faugère's F4 and F5 algorithms
+Featherstone's algorithm
+feature hashing
+Felsenstein's tree-pruning algorithm
+Firefly algorithm
+First Order Inductive Learner
+Forney algorithm
+Fortune's algorithm
+GWIC
+Gaussian adaptation
+Gerchberg–Saxton algorithm
+Gibbs algorithm
+Gillespie algorithm
+Girvan–Newman algorithm
+Gosper's algorithm
+Greedy coloring
+GrowCut algorithm
+HEXQ
+HS algorithm
+Candidate-Elimination Algorithm
+Holographic algorithm
+Huang's algorithm
+Pseudo-polynomial time
+hybrid difference scheme
+Hyphenation algorithm
+IP forwarding algorithm
+In-crowd algorithm
+Inside–outside algorithm
+Integer relation algorithm
+Intersection algorithm
+Island algorithm
+Promoter based genetic algorithm
+Rotating calipers
+Schoof–Elkies–Atkin algorithm
+Sethi–Ullman algorithm
+Jenkins–Traub algorithm
+Jump-and-Walk algorithm
+KCDSA
+Kabsch algorithm
+Karloff–Zwick algorithm
+LIRS caching algorithm
+LOBPCG
+LZRW
+LZWL
+Lander–Green algorithm
+Lehmer's GCD algorithm
+Lehmer–Schur algorithm
+Lemke's algorithm
+Freivalds' algorithm
+Wang and Landau algorithm
+Lindsey–Fox algorithm
+Local Elevation
+Local replacement algorithm
+Luhn mod N algorithm
+Luleå algorithm
+MCS algorithm
+Manhattan address algorithm
+eigenvalue algorithm
+Marzullo's algorithm
+bucket sort
+Medical algorithm
+Metropolis light transport
+Minimax approximation algorithm
+minimum bounding box algorithm
+Mm algorithm
+Momel
+non-linear iterative partial least squares
+One-pass algorithm
+Perceptual Speech Quality Measure
+Package-merge algorithm
+Pantelides algorithm
+Parks-McClellan filter design algorithm
+Path-based strong component algorithm
+Pitch detection algorithm
+Polynomial-time algorithm for approximating the volume of convex bodies
+Prime-factor FFT algorithm
+Proxmap sort
+Quality control and genetic algorithms
+RC algorithm
+RNA integrity number
+ROAM
+Rader's FFT algorithm
+Random walker algorithm
+Randomized weighted majority algorithm
+Read-copy-update
+Reconstruction algorithm
+Reeds–Sloane algorithm
+Reversible reference system propagation algorithm
+Rocchio algorithm
+Run-time algorithm specialisation
+Ruppert's algorithm
+SPIKE algorithm
+Sardinas–Patterson algorithm
+Schreier–Sims algorithm
+Scoring algorithm
+Sequence step algorithm
+Sequential algorithm
+Simulated fluorescence process algorithm
+Smoothed analysis
+Soft output Viterbi algorithm
+Sukhotin's algorithm
+Suurballe's algorithm
+Suzuki-Kasami algorithm
+Swendsen–Wang algorithm
+Tate's algorithm
+Thompson's construction algorithm
+Tournament sort
+Track algorithm
+Ukkonen's algorithm
+Neville's algorithm
+VEGAS algorithm
+Vatti clipping algorithm
+Vector Field Histogram
+Wake-sleep algorithm
+Water filling algorithm
+Wu's method of characteristic set
+XDAIS algorithms
+Yamb
+Yarowsky algorithm
+Yen's algorithm
+Zemor's decoding algorithm
+Zhu–Takaoka string matching algorithm
+TCP Vegas
+rsync algorithm
+Imperialist competitive algorithm
+Intelligent Water Drops algorithm
+Liu Hui's π algorithm
+Spigot algorithm
+RODM
+Trémaux’ Methode
+evolutionary algorithm
+Local Algorithm
+IPO underpricing algorithm
+Inparanoid
+Genetic algorithms in economics
+Out-of-kilter algorithm
+Petkovšek's algorithm
+Devex algorithm
+Pairwise sorting network
+Bayes classifier
+BHT algorithm
+Block sort
+Hunt–McIlroy algorithm
+Floyd–Rivest algorithm
+Datafly algorithm
+SALSA algorithm
+Quantum algorithm for linear systems of equations
+Greiner-Hormann clipping algorithm
+Newton's method in optimization
+HCS clustering algorithm
+Hybrid algorithm
+Hybrid algorithm
+HyperLogLog
+Introselect
+Itoh-Tsujii inversion algorithm
+kernel perceptron
+YDS algorithm
+Minimum degree algorithm
+Pocklington's algorithm
+Raft
+Kleene's algorithm
+Split-radix FFT algorithm
+Tonelli–Shanks algorithm
+PISO algorithm
+Solution algorithms for pressure-velocity coupling in steady flows
+Möller–Trumbore intersection algorithm
+Teiresias algorithm
+Platt scaling
+Nested sampling algorithm
+Atlantic City algorithm
+Knuth's Simpath algorithm
+Kleitman–Wang algorithms
+Cubesort
+Curve shortening flow
+t-Distributed Stochastic Neighbor Embedding
+Kaprekar algorithm
+Shuffled frog leaping algorithm
+Misra & Gries edge coloring algorithm
+Domain reduction algorithm
+item-item collaborative filtering
+Held–Karp algorithm
+Pollard-Strassen algorithm
+Kronecker's method
+Double Ratchet Algorithm
+GloVe
+RankBrain
+RCASE
+Fast Algorithms for Multidimensional Signals
+Kunstweg
+G Subscript C
+Bernoulli's triangle
+AIVA
+bidirectional search
+TransE
+Hub-labelling Algorithm
+Teknomo–Fernandez algorithm
+Putzer algorithm
+Uniform Manifold Approximation and Projection
+delta encoding
+delta encoding
+Forward–backward algorithm
+Forward–backward algorithm
+angry path
+delinquent path
+embarassing path
+desolate path
+scary path
+greedy path
+stressful path
+regret-matching
+Watson
+WPGMA
+Samplesort
+MAGENTA
+delta encoding
+delta encoding
+MinHash
+Forward–backward algorithm
+Forward–backward algorithm
+comb sort
+Metaphone
+Red Pike
+Laguerre's method
+selection sort
+Solving quadratic equations with continued fractions
+Miller–Rabin primality test
+methods of computing square roots
+insertion sort
+Twofish
+alpha–beta pruning
+Durand–Kerner method
+S-1 block cipher
+Aho–Corasick string matching algorithm
+sequential minimal optimization
+Splitting circle method
+Grover's algorithm
+Blowfish
+Enhanced Variable Rate Codec
+ARIA
+International Data Encryption Algorithm
+ISAAC
+Polybius square
+inverse distance weighting
+heapsort
+Halley's method
+false position method
+Booth's multiplication algorithm
+Cologne phonetics
+depth-limited search
+linear search
+CAST-256
+Fermat primality test
+Camellia
+biconjugate gradient stabilized method
+Boyer–Moore string search algorithm
+binary search algorithm
+Karatsuba algorithm
+Householder's method
+AKS primality test
+bogosort
+binary search algorithm
+topological sorting
+Odd–even sort
+speculative execution
+Data Encryption Standard
+Triple DES
+Mersenne twister
+Advanced Encryption Standard
+Linear congruential generator
+angle trisection
+DEAL
+gnome sort
+Timsort
+Tesseract
+Ridders' method
+quicksort
+Cellular Message Encryption Algorithm
+LOKI
+Sieve of Eratosthenes
+Cocktail shaker sort
+shellsort
+radix sort
+loop unswitching
+SHACAL
+Muller's method
+Golden section search
+A* search algorithm
+BLAST
+Tree sort
+Tiny Encryption Algorithm
+Rabin–Karp algorithm
+ICE
+CS-Cipher
+CORDIC
+LOKI97
+Land Allocation Decision Support System
+Digital Signature Algorithm
+iterative deepening depth-first search
+Ant colony optimization algorithms
+Fortuna
+Bead sort
+rational root theorem
+KASUMI
+RC2
+counting sort
+GOCR
+GGH signature scheme
+MARS
+Newton's method
+Blum Blum Shub
+Bairstow's method
+Ancient Egyptian multiplication
+DPLL algorithm
+Shifting nth root algorithm
+merge insertion
+REDOC
+Toom–Cook multiplication
+ABBYY FineReader
+ElGamal signature scheme
+introsort
+Pépin's test
+Slowsort
+Madryga
+Stooge sort
+Simulated annealing
+SEED
+KHAZAD
+smoothsort
+Trial division
+bogosort
+interpolation search
+Hybridsort
+Sieve of Atkin
+Broyden's method
+Lucas primality test
+Baby-step giant-step
+SM4
+Ocrad
+Lucifer
+Schönhage–Strassen algorithm
+RC5
+RC6
+Brent's method
+FEAL
+XTEA
+Idea NXT
+bisection method
+Lucas–Lehmer primality test
+Skipjack
+Merkle signature scheme
+Serpent
+depth-limited search
+fixed-point iteration
+Selectable Mode Vocoder
+Variable-Rate Multimode Wideband
+middle-square method
+Dual_EC_DRBG
+inverse quadratic interpolation
+beam search
+SHARK
+NewDES
+Square
+Needleman–Wunsch algorithm
+MMB
+integer square root
+Cryptomeria cipher
+Double DES
+E2 (cipher)
+FROG
+Backpropagation
+Sieve of Sundaram
+Zyklenmethode
+Fürer's algorithm
+Merge sort
+Pancake sorting
+proof-number search
+Khufu and Khafre
+Akelarre
+GDES
+Gauss–Legendre algorithm
+DES-X
+GOST 28147-89
+quicksort
+work stealing
+Solovay–Strassen primality test
+SAFER
+Rod calculus
+Borwein's algorithm
+Test of Wilson
+LZX
+Lagged Fibonacci generator
+Pigeonhole sort
+Lattice multiplication
+Proth's theorem
+Lin–Kernighan heuristic
+PRESENT
+Threefish
+Hasty Pudding cipher
+MISTY1
+Array Based Queuing Locks
+Lossless Transform Audio Compression
+Library sort
+Patience sorting
+Nelder–Mead method
+Lucas–Lehmer–Riesel test
+gradient descent
+MESH
+MULTI2
+Ruffini's rule
+H.263
+loop-invariant code motion
+Birkhoff interpolation
+Malachim
+Nth root algorithm
+SC2000
+Quasi-Newton method
+BaseKing
+COCONUT98
+jump search
+uniform binary search
+Fibonacci search technique
+beam stack search
+B*
+Modified Huffman coding
+Beam propagation method
+ADFGVX cipher
+MPEG-1 Audio Layer III HD
+Karger's algorithm
+Atbash
+Geometry of roots of real polynomials
+one-time pad
+Baillie–PSW primality test
+Graeffe's method
+breadth-first search
+Batcher odd–even mergesort
+Limited-memory BFGS
+Bitonic sorter
+least slack time scheduling
+Beale ciphers
+Bifid cipher
+Bacon's cipher
+Inline expansion
+SCIgen
+Strand sort
+Adleman–Pomerance–Rumely primality test
+Pocklington primality test
+D'Agapeyeff cipher
+Cycle sort
+Burstsort
+CADUCEUS
+Jenkins–Traub algorithm
+depth-first search
+biconjugate gradient method
+Caverphone
+conjugate gradient method
+Ultra Low Delay Audio Coder
+Daitch–Mokotoff Soundex
+Demon algorithm
+Galois/Counter Mode
+mobile signature
+Generalized quaternion interpolation
+loop fission
+loop fusion
+loop interchange
+loop nest optimization
+loop scheduling
+multigrid method
+Aberth method
+Dunkerley's method
+Alpha max plus beta min algorithm
+Smart Bitrate Control
+Autokey cypher
+FEA-M
+earliest deadline first scheduling
+dichotomic search
+Elliptic curve primality testing
+kriging
+VIC cipher
+Steffensen's method
+bucket sort
+Q
+SAVILLE
+Proxmap sort
+Pointcheval–Stern signature algorithm
+xmx
+Xenon
+Lehmer–Schur algorithm
+Wheel factorization
+inverse distance weighting
+Tournament sort
+forgetful path
+Enhanced Variable Rate Codec B
+stack search
+Least mean squares filter
+DSS
+Unbalanced Oil and Vinegar
+Qualcomm code-excited linear prediction
+trigram search
+hebbian rule
+Ewald's sphere
+Delaunay triangulation
+MacGuffin
+K-SVD
+Merge sort
+Adler-32
+Affinity propagation
+uniform-cost search
+Monte Carlo tree search
+loop splitting
+recursive best-first search
+Rasterschlüssel 44
+LZ4
+FastLZ
+Havel–Hakimi algorithm
+Monte Carlo algorithm
+Raita algorithm
+secant method
+Sidi's generalized secant method
+Fugue
+Pairwise sorting network
+Quadratic Frobenius test
+Conflict Driven Clause Learning
+exponential search
+Jump point search
+similarity search
+Zhao Youqin's π algorithm
+RAC drawing
+Iterative deepening A*
+Euclidean shortest path
+Bend minimization
+Heron's method
+IDA*
+MCOP
+MENTOR routing algorithm
+Apache Spark
+Cycles render
+temporally-ordered routing algorithm
+Rijndael
+Brotli
+Kuznyechik
+Weka
+Bellman–Ford algorithm
+Floyd–Warshall algorithm
+ELKI
+A* search algorithm
+SMA*
+automatic vectorization
+Dolby AC-4
+Binarization of consensus partition matrices
+K-means++
+loop inversion
+Degeneracy
+BLISS signature scheme
+loop-level parallelism
+Banker's algorithm
+Hoshen–Kopelman algorithm
+Available expression
+Peterson's algorithm
+Automatic parallelization
+Constant folding
+Control flow analysis
+K-medians clustering
+Loop tiling
+Copy propagation
+Dekker's algorithm
+Anytime A*
+Karger's algorithm
+Lempel-Ziv, Finite State Entropy
+Maekawa's algorithm
+K-medoids
+Ward's method
+two-phase locking
+k-means clustering
+Dependence analysis
+Adaptive optimization
+Common subexpression elimination
+Cramer's rule
+Lamport's bakery algorithm
+Multiplicative binary search
+neighbor joining
+Lexicographic breadth-first search
+Chandy-Lamport Algorithm
+OPTICS algorithm
+tridiagonal matrix algorithm
+Sculpt 3D
+UPGMA
+Gauss–Seidel method
+Anytime A*
+Best Node Search
+Gauss–Jordan elimination
+Greedy triangulation
+DBSCAN
+dead code elimination
+self-organizing map
+Zstandard
+data-flow analysis
+data-flow analysis
+successive over-relaxation
+expectation–maximization algorithm
+Jacobi method
+Cuthill–McKee algorithm
+shortest path problem
+Independent set
+Pitman–Yor process
+Edmonds–Karp algorithm
+Return value optimization
+nearest neighbour algorithm
+Hopcroft–Karp algorithm
+Borůvka's algorithm
+long multiplication
+Mean-shift
+K q-flats
+Bron–Kerbosch algorithm
+Tarjan's strongly connected components algorithm
+pathfinding
+Linde–Buzo–Gray algorithm
+Ford–Fulkerson algorithm
+A* search algorithm
+Prim's algorithm
+Eisenberg & McGuire algorithm
+Push–relabel maximum flow algorithm
+topological sorting
+graph drawing
+Dinic's algorithm
+Spanning Tree Protocol
+SUBCLU
+Bellman–Ford algorithm
+Kruskal's algorithm
+best-first search
+Shape analysis
+Floyd–Warshall algorithm
+SimRank
+Blossom algorithm
+Single-linkage clustering
+CURE data clustering algorithm
+Canopy clustering algorithm
+Cluster-weighted modeling
+Cobweb
+Complete-linkage clustering
+Constrained clustering
+Copy elision
+Alias analysis
+Array access analysis
+BIRCH
+Lamport's Distributed Mutual Exclusion Algorithm
+Bounds-checking elimination
+Raymond's algorithm
+Adam optimizer
+Lee algorithm
+PQ tree
+Strength reduction
+happy path
+ticket lock
+information bottleneck method
+recursive best-first search
+Johnson's algorithm
+Pointer analysis
+Global value numbering
+Kosaraju's algorithm
+Junction tree algorithm
+escape analysis
+Transitive reduction
+FLAME clustering
+Tompkins–Paige algorithm
+Thalmann algorithm
+weighted round robin
+Picture
+proportionally fair
+loopless algorithm
+Lemke–Howson algorithm
+Fisher–Yates shuffle
+hierarchical fair-service curve
+generic cell rate algorithm
+FINO
+deficit round robin
+HPACK
+LOOK algorithm
+shortest seek first
+N-Step-SCAN
+FSCAN
+Bit-reversal permutation
+Steinhaus–Johnson–Trotter algorithm
+Bender–Knuth involution
+credit-based fair queuing
+class-based queueing
+Reduced gradient bubble model
+stochastic fairness queuing
+work stealing
+Robinson–Schensted–Knuth correspondence
+Robinson–Schensted correspondence
+Lin–Kernighan heuristic
+Kernighan–Lin algorithm
+CFQ
+QuickHull
+exponential backoff
+leaky bucket
+fair queuing
+Varying Permeability Model
+shortest job next
+round-robin scheduling
+LIFO
+jeu de taquin
+FIFO
+weighted fair queuing
+token bucket
+elevator algorithm
+critical path method
+active queue management
+random early detection
+anticipatory scheduling
+VMAC
+one-key message authentication code
+Bühlmann decompression algorithm
+cipher block chaining message authentication code
+Thermodynamic model of decompression
+delay-gradient congestion control
+maximum throughput scheduling
+max-min fairness
+interleaved polling with adaptive cycle time
+SMAWK algorithm
+Criss-cross algorithm
+Hierarchical RBF
+Heap's algorithm
+Uniform Manifold Approximation and Projection
+Guardian of Forever
+Multimodal sentiment analysis
+Putzer algorithm
+Operation Serenata de Amor
+Teknomo–Fernandez algorithm
+Hub-labelling Algorithm
+Chainer
+TransE
+Dijkstra's algorithm
+Kizuna AI
+AIVA
+Kunstweg
+G Subscript C
+Bernoulli's triangle
+Gaussian elimination
+Brainiac
+Fast Algorithms for Multidimensional Signals
+RCASE
+RankBrain
+GloVe
+Talking Angela
+Double Ratchet Algorithm
+Dijkstra's algorithm
+Pollard-Strassen algorithm
+Kronecker's method
+Held–Karp algorithm
+item-item collaborative filtering
+Domain reduction algorithm
+Misra & Gries edge coloring algorithm
+Shuffled frog leaping algorithm
+t-Distributed Stochastic Neighbor Embedding
+Kaprekar algorithm
+Kleitman–Wang algorithms
+Curve shortening flow
+Cubesort
+Knuth's Simpath algorithm
+Atlantic City algorithm
+Teiresias algorithm
+Platt scaling
+Nested sampling algorithm
+PISO algorithm
+Solution algorithms for pressure-velocity coupling in steady flows
+Möller–Trumbore intersection algorithm
+Quantum algorithm for linear systems of equations
+Greiner-Hormann clipping algorithm
+Newton's method in optimization
+minimum bounding box algorithm
+Metropolis light transport
+bucket sort
+Medical algorithm
+eigenvalue algorithm
+Marzullo's algorithm
+Manhattan address algorithm
+Luhn mod N algorithm
+MCS algorithm
+Luleå algorithm
+Local Elevation
+Local replacement algorithm
+Lemke's algorithm
+Freivalds' algorithm
+Wang and Landau algorithm
+Lindsey–Fox algorithm
+Lehmer's GCD algorithm
+Lehmer–Schur algorithm
+LIRS caching algorithm
+LOBPCG
+LZWL
+LZRW
+Lander–Green algorithm
+Karloff–Zwick algorithm
+KCDSA
+Kabsch algorithm
+Jump-and-Walk algorithm
+Jenkins–Traub algorithm
+Sethi–Ullman algorithm
+Schoof–Elkies–Atkin algorithm
+Rotating calipers
+Promoter based genetic algorithm
+Island algorithm
+Inside–outside algorithm
+Integer relation algorithm
+Intersection algorithm
+In-crowd algorithm
+IP forwarding algorithm
+Pseudo-polynomial time
+Hyphenation algorithm
+hybrid difference scheme
+Huang's algorithm
+Holographic algorithm
+Candidate-Elimination Algorithm
+GrowCut algorithm
+HEXQ
+HS algorithm
+Greedy coloring
+Gosper's algorithm
+Gerchberg–Saxton algorithm
+Girvan–Newman algorithm
+Gibbs algorithm
+Gillespie algorithm
+GWIC
+Gaussian adaptation
+Fortune's algorithm
+Firefly algorithm
+First Order Inductive Learner
+Featherstone's algorithm
+feature hashing
+Felsenstein's tree-pruning algorithm
+Forney algorithm
+Expected linear time MST algorithm
+FastContact
+Fast folding algorithm
+Faugère's F4 and F5 algorithms
+FKT algorithm
+FNN algorithm
+Elston–Stewart algorithm
+Emily Howell
+Dykstra's projection algorithm
+Edge disjoint shortest pair algorithm
+Divide-and-conquer eigenvalue algorithm
+Dijkstra–Scholten algorithm
+Drizzle
+Super-recursive algorithm
+Day–Stout–Warren algorithm
+De Boor's algorithm
+Difference-map algorithm
+Damm algorithm
+Cultural algorithm
+Covariance intersection
+Cycle sort
+Cyrus–Beck algorithm
+Condensation algorithm
+Cone algorithm
+Commentz-Walter algorithm
+Cornacchia's algorithm
+Consistent Overhead Byte Stuffing
+Constraint algorithm
+Convex hull algorithms
+Cooley–Tukey FFT algorithm
+Cipolla's algorithm
+Coffman–Graham algorithm
+Client Puzzle Protocol
+Cheney's algorithm
+Chew's second algorithm
+Chien search
+Cellular evolutionary algorithm
+Cascade algorithm
+Chandra–Toueg consensus algorithm
+Chaff algorithm
+Chaitin's algorithm
+Bulirsch–Stoer algorithm
+C-Link
+CJCSG
+CLEAN
+CN2 algorithm
+CONQUEST
+Burstsort
+Buzen's algorithm
+Bowyer–Watson algorithm
+Bruun's FFT algorithm
+Reverse-delete algorithm
+Block Lanczos algorithm for nullspace of a matrix over a finite field
+Block Wiedemann algorithm
+Bitonic sorter
+Tarjan's off-line least common ancestors algorithm
+Berendsen thermostat
+Berlekamp–Welch algorithm
+Berlekamp–Zassenhaus algorithm
+Benson's algorithm
+Bareiss algorithm
+Bayesian tool for methylation analysis
+Bayesian inference using Gibbs sampling
+Beeman's algorithm
+Beier–Neely morphing algorithm
+Bat algorithm
+Batcher odd–even mergesort
+Auction algorithm
+BHHH algorithm
+BLS
+BRST algorithm
+Bach's algorithm
+Backfitting algorithm
+Astronomical algorithm
+Artificial bee colony algorithm
+Apostolico–Giancarlo algorithm
+Approximate counting algorithm
+Algorithmic inference
+Algorithmic learning theory
+Algebraic-group factorisation algorithm
+Algorithms for calculating variance
+Alpha algorithm
+Alpha max plus beta min algorithm
+Adaptive-additive algorithm
+Addition-chain exponentiation
+Adleman–Pomerance–Rumely primality test
+3-opt
+HMAC-based One-time Password Algorithm
+LL(1)
+LR(0)
+MOSQUITO
+Williams' p + 1 algorithm
+FNAm2
+Gilbert–Johnson–Keerthi distance algorithm
+Verhoeff algorithm
+Bentley–Ottmann algorithm
+Boyer–Moore–Horspool algorithm
+belief propagation
+Lubachevsky–Stillinger algorithm
+Kirkpatrick–Seidel algorithm
+Pollard's rho algorithm for logarithms
+Quickselect
+Midpoint circle algorithm
+D.A.V.E.
+Ada Lovelace’ algorithm for computing Bernoulli numbers
+Median of medians
+Division algorithm
+Patience sorting
+BLEU
+SSS*
+Library sort
+Bees algorithm
+selection algorithm
+Pigeonhole sort
+Gran plot
+Cholesky decomposition
+Gift wrapping algorithm
+Kahan summation algorithm
+Random naive Bayes
+Algorithm design
+Ziggurat algorithm
+Rabin signature algorithm
+Maze generation algorithm
+BFGS method
+AdaBoost
+Estimation of distribution algorithm
+Xiaolin Wu's line algorithm
+Top-nodes algorithm
+Clarke & Wright's savings algorithm
+Quantum phase estimation algorithm
+Wagner–Fischer algorithm
+Remez algorithm
+Schoof's algorithm
+Streaming algorithm
+Nth root algorithm
+Block-matching algorithm
+Fürer's algorithm
+Cantor–Zassenhaus algorithm
+Cannon's algorithm
+Lloyd's algorithm
+Knuth–Bendix completion algorithm
+Coppersmith–Winograd algorithm
+Lempel–Ziv–Welch
+Lempel–Ziv–Oberhumer
+LZ77
+Lempel–Ziv–Storer–Szymanski
+Huffman coding
+Burrows–Wheeler transform
+Lempel–Ziv–Markov Algorithm
+Reduced Offset Lempel Ziv
+DEFLATE
+Implode
+Bastion
+Lenstra elliptic curve factorization
+Kosaraju's algorithm
+Linear classifier
+quantum algorithm
+Wolff algorithm
+Warnock algorithm
+method of the second derivative
+Weiler–Atherton clipping algorithm
+Unicode Line Breaking Algorithm
+Odlyzko–Schönhage algorithm
+topology optimization
+sweep line algorithm
+EdgeRank
+Johnson's algorithm
+Great Deluge algorithm
+Karmarkar's algorithm
+Chandy-Lamport Algorithm
+Chudnovsky algorithm
+Zeller's congruence
+SHODAN
+Bron–Kerbosch algorithm
+XTR
+Odds algorithm
+Rete algorithm
+Chan's algorithm
+Frank–Wolfe algorithm
+Secure Hash Algorithm 2
+Tarjan's strongly connected components algorithm
+Solitaire
+Cohen–Sutherland algorithm
+Tomasulo algorithm
+Pollard's p − 1 algorithm
+Schönhage–Strassen algorithm
+Null encryption
+Pollard's kangaroo algorithm
+Markov algorithm
+Marching cubes
+Sutherland–Hodgman algorithm
+Collocation method
+NTRUSign
+Edmonds' algorithm
+Pohlig–Hellman algorithm
+Line drawing algorithm
+KSTEM
+Smith–Waterman algorithm
+Lenstra–Lenstra–Lovász lattice basis reduction algorithm
+Jacobi eigenvalue algorithm
+Roberts algorithm
+ID3 algorithm
+Johnson's rule
+Hilltop algorithm
+Hirschberg's algorithm
+Maze solving algorithm
+cycle detection
+Marr–Hildreth algorithm
+Gutmann method
+Hopcroft–Karp algorithm
+Toom–Cook multiplication
+butterfly diagram
+Unicode collation algorithm
+S/MIME
+Gauss–Newton algorithm
+Borůvka's algorithm
+Goertzel algorithm
+Ostrich algorithm
+Least mean squares filter
+Levenberg–Marquardt algorithm
+Unicode Segmentation Algorithm
+Risch algorithm
+second quantization
+nearest neighbour algorithm
+first quantization
+extended Euclidean algorithm
+Recursive descent parser
+Floyd–Steinberg dithering
+Ricart–Agrawala algorithm
+Edmonds–Karp algorithm
+SGI algorithm
+Chang and Roberts algorithm
+Ramer–Douglas–Peucker algorithm
+hebbian rule
+Gibbs sampling
+Newell's algorithm
+Diamond-square algorithm
+reduction
+shunting-yard algorithm
+Davis–Putnam algorithm
+De Casteljau's algorithm
+Cuthill–McKee algorithm
+parallel algorithm
+density functional theory
+Cayley–Purser algorithm
+Clenshaw algorithm
+British Museum algorithm
+K-nearest neighbor algorithm
+Deutsch–Jozsa algorithm
+Common Scrambling Algorithm
+HITS algorithm
+scikit-learn
+C4.5 algorithm
+method of undetermined coefficients
+Buchberger's algorithm
+Fermat's factorization method
+God's algorithm
+CYK algorithm
+Pollard's rho algorithm
+Painter's algorithm
+Shor's algorithm
+branch and bound
+Configuration interaction
+Blum–Micali algorithm
+Bluestein's FFT algorithm
+Metropolis–Hastings algorithm
+Graham scan
+Luhn algorithm
+exponentiation by squaring
+radix sort
+Berlekamp–Massey algorithm
+Berlekamp's algorithm
+Kalman filter
+Kruskal's algorithm
+backtracking
+Cristian's algorithm
+Bootstrap aggregating
+Baum–Welch algorithm
+Naive Bayes classifier
+Bayesian spam filtering
+Bailey–Borwein–Plouffe formula
+Online algorithm
+Dinic's algorithm
+Strassen algorithm
+perceptron
+Todd–Coxeter algorithm
+Bully algorithm
+Yarrow algorithm
+Nagle's algorithm
+BCJR algorithm
+Special number field sieve
+Mark-compact algorithm
+Quine–McCluskey algorithm
+Binary GCD algorithm
+MTD-f
+Liang–Barsky algorithm
+Push–relabel maximum flow algorithm
+Crank–Nicolson method
+BKM algorithm
+greedy algorithm
+CMA-ES
+Aitken's delta-squared process
+Levenshtein distance
+SIMPLE algorithm
+Christofides algorithm
+Apriori algorithm
+Prim's algorithm
+middle-square method
+Skynet
+Gram-Schmidt process
+Sequitur algorithm
+QR algorithm
+bitap algorithm
+Local outlier factor
+Shifting nth root algorithm
+supervised learning
+Adam7 algorithm
+Memetic algorithm
+symmetric-key algorithm
+μ-law algorithm
+A-law algorithm
+Berkeley algorithm
+Out-of-core algorithm
+Hungarian algorithm
+support vector machine
+Ford–Fulkerson algorithm
+Jenks natural breaks optimization
+Computus
+random forest
+Euclidean algorithm
+heuristic
+Cox–Zucker machine
+Flooding algorithm
+Time-based One-time Password Algorithm
+data mining
+PageRank
+Diffusing update algorithm
+genetic algorithm
+SALSA algorithm
+YDS algorithm
+Minimum degree algorithm
+Pocklington's algorithm
+Raft
+Kleene's algorithm
+Split-radix FFT algorithm
+Tonelli–Shanks algorithm
+HCS clustering algorithm
+Hybrid algorithm
+Hybrid algorithm
+HyperLogLog
+Itoh-Tsujii inversion algorithm
+Introselect
+kernel perceptron
+Datafly algorithm
+Floyd–Rivest algorithm
+Block sort
+Hunt–McIlroy algorithm
+Pairwise sorting network
+Bayes classifier
+BHT algorithm
+H.O.M.E.R.
+Devex algorithm
+Out-of-kilter algorithm
+Petkovšek's algorithm
+Genetic algorithms in economics
+Inparanoid
+IPO underpricing algorithm
+Local Algorithm
+evolutionary algorithm
+Trémaux’ Methode
+RODM
+Spigot algorithm
+Liu Hui's π algorithm
+Imperialist competitive algorithm
+Intelligent Water Drops algorithm
+rsync algorithm
+TCP Vegas
+Zhu–Takaoka string matching algorithm
+Zemor's decoding algorithm
+Wu's method of characteristic set
+XDAIS algorithms
+Yamb
+Yarowsky algorithm
+Yen's algorithm
+Water filling algorithm
+Wake-sleep algorithm
+VEGAS algorithm
+Vatti clipping algorithm
+Vector Field Histogram
+Ukkonen's algorithm
+Neville's algorithm
+Tournament sort
+Track algorithm
+Thompson's construction algorithm
+Tate's algorithm
+Suurballe's algorithm
+Suzuki-Kasami algorithm
+Sukhotin's algorithm
+Swendsen–Wang algorithm
+Smoothed analysis
+Soft output Viterbi algorithm
+SimSimi
+Simulated fluorescence process algorithm
+Ship
+Sequence step algorithm
+Sequential algorithm
+Schreier–Sims algorithm
+Scoring algorithm
+Sardinas–Patterson algorithm
+Run-time algorithm specialisation
+Ruppert's algorithm
+SPIKE algorithm
+Rocchio algorithm
+Reversible reference system propagation algorithm
+RC algorithm
+ROAM
+RNA integrity number
+Rader's FFT algorithm
+Read-copy-update
+Reconstruction algorithm
+Reeds–Sloane algorithm
+Randomized weighted majority algorithm
+Random walker algorithm
+Proxmap sort
+Prime-factor FFT algorithm
+Quality control and genetic algorithms
+Polynomial-time algorithm for approximating the volume of convex bodies
+Pitch detection algorithm
+Path-based strong component algorithm
+Perceptual Speech Quality Measure
+Package-merge algorithm
+Parks-McClellan filter design algorithm
+Pantelides algorithm
+One-pass algorithm
+non-linear iterative partial least squares
+Momel
+Mm algorithm
+Minimax approximation algorithm
+3-Way
+Soundex
+Monte Carlo method
+SMA*
+General number field sieve
+simplex algorithm
+Zassenhaus algorithm
+Trachtenberg system
+Path tracing
+collaborative filtering
+Viterbi algorithm

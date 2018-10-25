@@ -161,9 +161,9 @@ def get_sentiment_from_model(df):
     #sentiment_mapping = {'o': emoji.emojize(' (:first_quarter_moon:)', use_aliases=True), 
     #                     'n': emoji.emojize(' (:new_moon:)', use_aliases=True),
     #                     'p': emoji.emojize(' (:full_moon:)', use_aliases=True)}
-    sentiment_mapping = {'o': emoji.emojize(' (:thumbsup:)', use_aliases=True), 
+    sentiment_mapping = {'o': emoji.emojize(' (:hand:)', use_aliases=True), 
                          'n': emoji.emojize(' (:thumbsdown:)', use_aliases=True),
-                         'p': emoji.emojize(' (:hand:)', use_aliases=True)}
+                         'p': emoji.emojize(' (:thumbsup:)', use_aliases=True)}
     df['sentiment'] = df['sentiment'].map(sentiment_mapping)
     # Concatenate the sentiment column to the end of the sentence column, and drop the sentiment column
     df.citing_sentence = df.citing_sentence.str.cat(df.sentiment)
@@ -263,7 +263,7 @@ def add_query_type(query, query_type):
     
     elif query_type == 'and':
         # query is a list, authors search
-        query = ['"' + name + '"~' + str(len(name.split())) for name in query]
+        query = ['"' + name + '"~' + str(len(name.split()) + 1) for name in query]
         query = ' AND '.join(query)
     return query
 

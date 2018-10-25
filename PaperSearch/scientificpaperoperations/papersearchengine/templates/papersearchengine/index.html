@@ -6,7 +6,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>PaperSearch</title>
+    <title>PaperHunter</title>
     {% load static %}
     <link rel="shortcut icon" href="{%  static 'papersearchengine/favicon/favicon.ico' %}">
     <!-- Font Awesome -->
@@ -33,7 +33,7 @@
 <nav class="navbar navbar-expand-lg navbar-dark colour1">
 
   <!-- Navbar brand -->
-  <a class="navbar-brand" href="/"><strong>PaperSearch</strong></a>
+  <a class="navbar-brand" href="/"><strong><b>PaperHunter</b></strong></a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
         aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
@@ -43,20 +43,19 @@
       <!-- Links -->
       <ul class="navbar-nav mr-auto">
           <li class="nav-item">
-              <a class="nav-link" href="/searchengine/phrasesearch">Phrase Search
-              </a>
+              <a class="nav-link" href="/searchengine/phrasesearch">Paper Given Phrase</a>
           </li>
           <li class="nav-item">
-              <a class="nav-link" href="/searchengine/titlesearch">Get Metadata from title</a>
+              <a class="nav-link" href="/searchengine/titlesearch">Paper Given Title</a>
           </li>
           <li class="nav-item">
-              <a class="nav-link" href="/searchengine/authorsearch">Search by Author</a>
+              <a class="nav-link" href="/searchengine/authorsearch">Paper Given Author</a>
           </li>
           <li class="nav-item">
-              <a class="nav-link" href="/searchengine/citedpapersearch">Search by cited paper</a>
+              <a class="nav-link" href="/searchengine/citedpapersearch">Citation Contexts Given Cited Paper's Title</a>
           </li>
           <li class="nav-item">
-              <a class="nav-link" href="/searchengine/citedauthorsearch">Search by cited authors</a>
+              <a class="nav-link" href="/searchengine/citedauthorsearch">Citation Contexts Given Cited Paper's Author</a>
           </li>
 
       </ul>
@@ -81,11 +80,10 @@
 <div class="row">
     <div class="col-md-12 mb-5">
         <div class="card card-image colour1 text-center">
-                    <h1 class="card-title pt-3 mb-2 font-bold"><strong>Welcome to PaperSearch!</strong></h1>
-                    <p class="mx-5 mb-1">Here, you can perform a variety of searches on our corpus of scientific papers. 
-			You can search for a phrase in the content of all the papers, get metadata about papers, search for papers by title or author, 
-			and also search by the title of the cited paper/cited author(s). </p>
-     
+                    <h1 class="card-title pt-3 mb-2 font-bold"><strong>Welcome to PaperHunter!</strong></h1>
+                    <p class="mx-5 mb-1">Here, you can search for papers and citation contexts given all computer science papers of <a href="http://arxiv.org">arXiv.org</a>.<br />
+You can search for <b>papers</b> based on a <b>phrase</b>,the <b>title</b>, or the <b>author's name</b>.<br />
+You can also search for <b>citation contexts</b> based on the <b>title</b> or <b>author name</b> of a <b>cited paper</b>.</p>
        </div>
    </div>
 <!-- Card deck -->
@@ -94,11 +92,12 @@
   <!-- Card -->
   <div class="card mb-4 colour1">
 	<div class="card-header card-title colour1">
-		<h4 class="card-title">Search by word/phrase</h4>
+		<h4 class="card-title">Paper Given Phrase</h4>
 	</div>
         <!--Card content-->
     	<div class="card-body colour1">
-    	     <p class="card-text colour1 text-white">Search for a word/phrase in the content of all the papers in the corpus.</p>
+    	     <p class="card-text colour1 text-white">
+Search for papers which contain a given phrase in the body text.</p>
 	</div>
       	<div class="card-footer colour1">
       		<a href="/searchengine/phrasesearch" class="btn btn-md teal darken-2">Take me there!</a>
@@ -109,11 +108,11 @@
   <!-- Card -->
   <div class="card mb-4 colour1">
 	<div class="card-header card-title colour1">
-		<h4 class="card-title">Get metadata from title</h4>
+		<h4 class="card-title">Paper Given Title</h4>
 	</div>
         <!--Card content-->
     	<div class="card-body colour1">
-    	     <p class="card-text colour1 text-white">Search by paper title and get author(s), publication date, arXiV, and dblp URLs.</p>
+    	     <p class="card-text colour1 text-white">Search for papers which have a given (incomplete) title.</p>
 	</div>
       	<div class="card-footer colour1">
       		<a href="/searchengine/titlesearch" class="btn btn-md teal darken-2">Take me there!</a>
@@ -124,11 +123,11 @@
   <!-- Card -->
   <div class="card mb-4 colour1">
 	<div class="card-header card-title colour1">
-		<h4 class="card-title">Find papers by author(s)</h4>
+		<h4 class="card-title">Paper Given Author</h4>
 	</div>
         <!--Card content-->
     	<div class="card-body colour1">
-    	     <p class="card-text colour1 text-white">Find papers which have been written by an author or a group of authors.</p>
+    	     <p class="card-text colour1 text-white">Search for papers which have been written by a given author or group of authors.</p>
 	</div>
       	<div class="card-footer colour1">
       		<a href="/searchengine/authorsearch" class="btn btn-md teal darken-2">Take me there!</a>
@@ -139,11 +138,11 @@
 <!-- Card -->
   <div class="card mb-4 colour1">
 	<div class="card-header card-title colour1">
-		<h4 class="card-title">Search by cited paper</h4>
+		<h4 class="card-title">Citation Contexts Given Cited Paper's Title</h4>
 	</div>
         <!--Card content-->
     	<div class="card-body colour1">
-    	     <p class="card-text text-white colour1">Search by title of cited papers, retrieve sentences in a (citing) paper which contain citations -- these citations are papers whose title is given in the search query.</p>
+    	     <p class="card-text text-white colour1">Search for sentences in papers where a paper given by its title is cited.</p>
 	</div>
       	<div class="card-footer colour1">
       		<a href="/searchengine/citedpapersearch" class="btn btn-md teal darken-2">Take me there!</a>
@@ -154,11 +153,11 @@
 <!-- Card -->
   <div class="card mb-4 colour1">
 	<div class="card-header card-title colour1">
-		<h4 class="card-title">Search by cited author(s)</h4>
+		<h4 class="card-title">Citation Contexts Given Cited Paper's Author</h4>
 	</div>
         <!--Card content-->
     	<div class="card-body colour1 texcolour1">
-    	     <p class="card-text text-white colour1">Search by cited author(s), retrieve sentences in a (citing) paper which contain citations -- these citations are papers whose author(s) are given in the search query.</p>
+    	     <p class="card-text text-white colour1">Search for sentences in papers where another paper given by its author is cited.</p>
 	</div>
       	<div class="card-footer colour1">
       		<a href="/searchengine/citedauthorsearch" class="btn btn-md teal darken-2">Take me there!</a>
