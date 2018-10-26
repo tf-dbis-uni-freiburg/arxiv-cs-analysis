@@ -185,8 +185,15 @@ app = dash.Dash()
 #app.css.append_css({'external_url': 'https://unpkg.com/sakura.css/css/sakura.css'})
 app.css.append_css({'external_url': 'https://codepen.io/chriddyp/pen/bWLwgP.css'})
 app.css.append_css({'external_url': 'https://rawgit.com/lwileczek/Dash/master/undo_redo5.css'})
+# Black background, blue text
+#colours = {
+#    'background': '#111111',
+#    'text': '#0080A5'
+#}   
+
+# White background, blue text
 colours = {
-    'background': '#111111',
+    'background': '#ffffff',
     'text': '#0080A5'
 }   
 app.layout = html.Div(style={'backgroundColor': colours['background'],
@@ -472,16 +479,18 @@ def show_graph_unique_not_callback(n_clicks, input_box):
     layout_unique = go.Layout(
                     title = 'Percentage of papers containing chosen entity mention(s) per Month',
                     xaxis = {'title': 'Publication date', 'tickformat': '%b %y', 'tick0': '2007-04-30',
-                             'dtick': 'M2', 'range': ['2007-03-25', '2018-01-25']},
-                    yaxis = {'title': 'Percentage of papers with entity mention', 'ticksuffix': '%'},
+                             'dtick': 'M2', 'range': ['2007-03-25', '2018-01-25'], 'titlefont': {'size': 20}, 'tickfont': {'size': 15}},
+                    yaxis = {'title': 'Percentage of papers with entity mention', 'ticksuffix': '%', 'titlefont': {'size': 20}, 'tickfont': {'size': 18}},
                     plot_bgcolor = colours['background'],
                     paper_bgcolor = colours['background'],
                     barmode = 'stack',
                     hovermode = 'closest',
                     font= {
-                            'color': colours['text']
+                            'color': colours['text'],
+                            'size': 15
                           },
-                    showlegend=True
+                    showlegend=True,
+                    legend = {'font': {'size': 18}}
                     )
     
     if input_box != '':

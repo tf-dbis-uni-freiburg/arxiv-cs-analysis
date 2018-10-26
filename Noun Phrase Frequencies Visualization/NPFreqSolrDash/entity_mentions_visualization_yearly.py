@@ -180,8 +180,15 @@ app = dash.Dash()
 #app.css.append_css({'external_url': 'https://unpkg.com/sakura.css/css/sakura.css'})
 app.css.append_css({'external_url': 'https://codepen.io/chriddyp/pen/bWLwgP.css'})
 app.css.append_css({'external_url': 'https://rawgit.com/lwileczek/Dash/master/undo_redo5.css'})
+# Black background, blue text
+#colours = {
+#    'background': '#111111',
+#    'text': '#0080A5'
+#}   
+
+# White background, blue text
 colours = {
-    'background': '#111111',
+    'background': '#ffffff',
     'text': '#0080A5'
 }   
 app.layout = html.Div(style={'backgroundColor': colours['background'],
@@ -237,7 +244,7 @@ def show_graph_total(n_clicks, input_box):
     
     # Store the layout with the appropriate title and y axis labels for the graph
     layout_total = go.Layout(
-                    title = 'Percentage of occurrences of chosen noun phrase URL(s) per Year',
+                    title = 'Percentage of occurrences of chosen entity mention(s) per Year',
                     xaxis = {'title': 'Publication year', 'tickformat': '%Y', 'tick0': '2007-12-31',
                              'dtick': 'M12', 'range': ['2007-07-01', '2018-07-01']},
                     yaxis = {'title': 'Percentage of phrase URL occurrences', 'ticksuffix': '%'},
@@ -316,7 +323,7 @@ def show_graph_unique(n_clicks, input_box):
                from Solr """
     # Store the layout with the appropriate title and y axis labels for the graph
     layout_unique = go.Layout(
-                    title = 'Percentage of papers containing chosen noun phrase URL(s) per Year',
+                    title = 'Percentage of papers containing chosen entity mention(s) per Year',
                     xaxis = {'title': 'Publication year', 'tickformat': '%Y', 'tick0': '2007-12-31',
                             'dtick': 'M12', 'range': ['2007-07-01', '2018-07-01']},
                     yaxis = {'title': 'Percentage of papers with noun phrase URL', 'ticksuffix': '%'},
@@ -388,7 +395,7 @@ def show_graph_total_not_callback(n_clicks, input_box):
     
     # Store the layout with the appropriate title and y axis labels for the graph
     layout_total = go.Layout(
-                    title = 'Percentage of occurrences of chosen noun phrase URL(s) per Year',
+                    title = 'Percentage of occurrences of chosen entity mention(s) per Year',
                     xaxis = {'title': 'Publication year', 'tickformat': '%Y', 'tick0': '2007-12-31',
                              'dtick': 'M12', 'range': ['2007-07-01', '2018-07-01']},
                     yaxis = {'title': 'Percentage of phrase URL occurrences', 'ticksuffix': '%'},
@@ -463,18 +470,20 @@ def show_graph_unique_not_callback(n_clicks, input_box):
                from Solr """
     # Store the layout with the appropriate title and y axis labels for the graph
     layout_unique = go.Layout(
-                    title = 'Percentage of papers containing chosen noun phrase URL(s) per Year',
+                    title = 'Percentage of papers containing chosen entity mention(s) per Year',
                     xaxis = {'title': 'Publication year', 'tickformat': '%Y', 'tick0': '2007-12-31',
-                            'dtick': 'M12', 'range': ['2007-07-01', '2018-07-01']},
-                    yaxis = {'title': 'Percentage of papers with noun phrase URL', 'ticksuffix': '%'},
+                            'dtick': 'M12', 'range': ['2007-07-01', '2018-07-01'], 'titlefont': {'size': 20}, 'tickfont': {'size': 18}},
+                    yaxis = {'title': 'Percentage of papers with noun phrase URL', 'ticksuffix': '%', 'titlefont': {'size': 20}, 'tickfont': {'size': 18}},
                     plot_bgcolor = colours['background'],
                     paper_bgcolor = colours['background'],
                     barmode = 'stack',
                     hovermode = 'closest',
                     font= {
-                            'color': colours['text']
+                            'color': colours['text'],
+                            'size': 15
                           },
-                    showlegend=True
+                    showlegend=True,
+                    legend = {'font': {'size': 20}}
                     )
     
     if input_box != '':

@@ -134,7 +134,7 @@ def search_references(query, num_rows, search_type):
     result_counter = len(final_results)
     final_results = final_results[:num_rows] 
     final_results.sort(key=lambda x: x[7].split(';')[0], reverse=True)     
-    return (final_results, num_total_citations, num_unique_citations, num_rows, result_counter,query)
+    return (final_results, result_counter, num_rows, query)
 
 def read_polar_phrases():
     """ Reads a file of positive/negative words, return 2 separate lists of positive and negative words resp."""
@@ -173,9 +173,9 @@ def get_sentiment_from_model(results):
     df['sentiment'] = text_pipeline.predict(df.sentence)
     # Map sentiment symbol to the actual sentiment
     # Map sentiment symbol to the actual sentiment
-    sentiment_mapping = {'o': emoji.emojize(' (:first_quarter_moon:)', use_aliases=True), 
-                         'n': emoji.emojize(' (:new_moon:)', use_aliases=True),
-                         'p': emoji.emojize(' (:full_moon:)', use_aliases=True)}
+    sentiment_mapping = {'o': emoji.emojize(' (:hand:)', use_aliases=True), 
+                         'n': emoji.emojize(' (:thumbsdown:)', use_aliases=True),
+                         'p': emoji.emojize(' (:thumbsup:)', use_aliases=True)}
 
     df['sentiment'] = df['sentiment'].map(sentiment_mapping)
     # Concatenate the sentiment column to the end of the sentence column, and drop the sentiment column
