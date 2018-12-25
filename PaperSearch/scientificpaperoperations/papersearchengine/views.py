@@ -3,8 +3,8 @@ import re
 from django.shortcuts import render
 from django.http import HttpResponse, Http404, HttpResponseRedirect
 from .forms import SearchPapersForm, SearchCitedAuthorsForm, SearchCitedPaperForm, SearchAuthorsForm, SearchMetatitleForm
-#from .django_paper_search_v2 import *
-from .django_paper_search import *
+from .django_paper_search_v2 import *
+#from .django_paper_search import *
 
 # Create your views here.
 
@@ -32,20 +32,19 @@ def phrase_search(request):
             if numrows is None:
                 numrows = 100
             # Render the search results form
-            reslist = search_sentences(query, numrows)
+            reslist = search_sentences_plus(query, numrows)
             if reslist == []:
                 # No results found
                 printdict = {'query': query, 'numresults': 0, 'results':[], 'numrows': numrows}
             else:
-                results, query, num_rows, num_results = reslist
-                results = normalize_date_phrase_search(results)
+                results, num_results, num_rows, query  = reslist
                 printdict = {'query': query, 'numresults': num_results, 'results':results, 'numrows': numrows}
 
             return render(request, 'papersearchengine/phrasesearchresults.html', 
                           printdict)
     else:
         form=SearchPapersForm()
-    # Render empty form       
+    # Render empty form
     return render(request, 'papersearchengine/phrasesearch.html',{'form':form})
 
 def metadatatitle_search(request):
@@ -65,12 +64,12 @@ def metadatatitle_search(request):
              numrows = cleaned.get('numrows')
              if numrows is None:
                  numrows = 100
-             results, num_results, num_rows = search_meta_titles(query, numrows)
-             if results == []:
+             reslist = search_meta_titles(query, numrows)
+             if reslist == []:
                  # No results found
                  printdict = {'query': query, 'numresults': 0, 'results':[], 'numrows': numrows}
              else:
-                 results = normalize_results(results)
+                 results, num_results, num_rows, query  = reslist
                  printdict = {'query': query, 'numresults': num_results, 'results':results, 'numrows': numrows}
 
              return render(request, 'papersearchengine/titlesearchresults.html', 
@@ -103,12 +102,12 @@ def author_search(request):
              authors = [author.strip() for author in authors]
              # Create a display string for the query with ANDs between authors.
              displayauthors = ' AND '.join(authors)
-             results, num_results, num_rows = search_authors(authors, numrows)
-             if results == []:
+             reslist = search_authors(authors, numrows)
+             if reslist == []:
                  # No results found
                  printdict = {'query': displayauthors, 'numresults': 0, 'results':[], 'numrows': numrows}
              else:
-                 results = normalize_results(results)
+                 results, num_results, num_rows, query  = reslist
                  printdict = {'query': displayauthors, 'numresults': num_results, 'results':results, 'numrows': numrows}
 
              return render(request, 'papersearchengine/authorsearchresults.html', 
@@ -173,7 +172,7 @@ def cited_author_serach(request):
              if numrows is None:
                  numrows = 100
              # Render the search results form
-             reslist = search_references(query, numrows, 'authors')
+             reslist = search_references_plus(query, numrows, 'authors')
              if reslist == []:
                  # No results found
                  printdict = {'query': query, 'numresults': 0, 'results':[], 'numrows': numrows}
@@ -181,7 +180,6 @@ def cited_author_serach(request):
                  results, num_results, num_rows, query = reslist
                  # Display only the query (remove the proximity symbol etc.)
                  query = query[:query.rfind('"')+1]
-                 results = change_dateformat_addoffsets_citation(results)
                  printdict = {'query': query, 'results':results, 'numrows': numrows, 'numresults': num_results}
              return render(request, 'papersearchengine/citedauthorsearchresults.html', 
                            printdict)
@@ -208,7 +206,7 @@ def cited_paper_search(request):
              if numrows is None:
                  numrows = 100
              # Render the search results form
-             reslist = search_references(query, numrows, 'title')
+             reslist = search_references_plus(query, numrows, 'title')
              if reslist == []:
                  # No results found
                  printdict = {'query': query, 'numresults': 0, 'results':[], 'numrows': numrows}
@@ -216,7 +214,6 @@ def cited_paper_search(request):
                  results, num_results, num_rows, query = reslist
                  # Display only the query (remove the proximity symbol etc.)
                  query = query[:query.rfind('"')+1]
-                 results = change_dateformat_addoffsets_citation(results)
                  printdict = {'query': query, 'results':results, 'numrows': numrows, 'numresults': num_results}
              return render(request, 'papersearchengine/citedpapersearchresults.html', printdict)
      else:

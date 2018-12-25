@@ -119,7 +119,7 @@
 
     <!-- Citing paper fields: papers, metadata, arxiv_metadata -->
     <!-- Papers -->
-    <!--<field name="sentencenum" type="pint" indexed="true" stored="true" multiValued="false"/> -->
+    <field name="sentencenum" type="pint" indexed="true" stored="true" multiValued="false"/>
     <field name="sentence" type="text_classic" indexed="true" stored="true" multiValued="false"/>
     <field name="arxiv_identifier" type="string" indexed="true" stored="true" multiValued="false"/>
     

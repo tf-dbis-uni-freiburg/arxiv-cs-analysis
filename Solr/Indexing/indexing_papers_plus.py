@@ -1,14 +1,15 @@
 # -*- coding: utf-8 -*-
 """
     #-------------------------------------------------------------------------------
-    # Name:        CREATE REFERENCES PLUS
-    # Purpose:     Uses indices for references, papers, metadata and arxiv-metadata
-    #              and inserts data into a new index 'references_plus' which adds
+    # Name:        CREATE PAPERS PLUS
+    # Purpose:     Uses indices for papers, metadata and arxiv-metadata
+    #              and inserts data into a new index 'papers_plus' which adds
     #              data from the other indices to the references index
     #
     # Author:      Ashwath Sampath
     #
     # Created:     21-10-2018
+    # Revised:     8-12-2018
     # Copyright:   (c) Ashwath Sampath 2018
     #-------------------------------------------------------------------------------
 
@@ -19,8 +20,12 @@ from collections import defaultdict
 import requests
 import datetime
 import pysolr
-from glob import iglob
+from glob import glob
 from time import time
+import concurrent.futures
+
+# Make a connection to Solr
+solr = pysolr.Solr('http://localhost:8983/solr/papers_plus')
 
 def search_solr(query, collection, search_field, num_rows):
     """ Searches the specified collection on the specified search_field (and a
@@ -58,7 +63,6 @@ def parse_json(data, collection):
         results = parse_metadata_json(data)
     return results
 
-
 def parse_arxiv_metadata_json(data):
     """ Function to parse the json response from the metadata or the
     arxiv_metadata collections in Solr. It returns the results as a
@@ -86,7 +90,7 @@ def parse_metadata_json(data):
     dblp_url = docs[0].get('url') 
     return dblp_url
 
-def parse_file_build_index():
+def parse_file_build_index(filepath):
     """ Read each of the txt files, which have sentences (with annotations). Use the file name (arxiv
     identifier) to get metadata from the arxiv_metadata and the metadata indices. Insert all the fields
     in a new index papers_plus.
@@ -108,50 +112,60 @@ def parse_file_build_index():
 
 
      """
-    # Make a connection to Solr
-    solr = pysolr.Solr('http://localhost:8983/solr/papers_plus')
+
+    with open(filepath, 'r') as file:
+        list_for_solr = []
+        filename = os.path.basename(filepath)
+        print(filename)
+        arxiv_identifier = '.'.join(filename.split('.')[:2])
+        linenum = 0
+        for line in file:
+            # Many lines have just ======, do not index them
+            if not line.startswith('=='):
+                solr_record = {}
+                linenum += 1
+                solr_record['sentence'] = line.replace('\n', '')
+                solr_record['sentencenum'] = linenum
+                # arxiv identifier is also the primary key.
+                solr_record['arxiv_identifier'] = arxiv_identifier
+                # Primary key is arxiv_identifier concatenated with the sentence number.
+                solr_record['id'] = "{}.{}".format(arxiv_identifier, linenum) 
+                # Read the metadata from the arxiv_metadata index with a dot in between
+                arxiv_metadata_result = search_solr(arxiv_identifier, 'arxiv_metadata', 'arxiv_identifier', 1)
+               
+                # Get the dblp url from the metadata index
+                dblp_url = search_solr(arxiv_identifier, 'metadata', 'arxiv_identifier', 1)
+                dblp_url = dblp_url if dblp_url is not None else 'unavailable'
+                solr_record['dblp_url'] = dblp_url
+                for title, authors, arxiv_url, published_dates in arxiv_metadata_result:
+                    # Flatten the published dates into a single string. Not using a DateRange field because
+                    # a grouping is done in django_paper_search which needs the dates to be a single string
+                    if len(published_dates) == 1:
+                        solr_record['published_date'] = published_dates[0]
+                        solr_record['revision_dates'] = 'unavailable'
+                    else:
+                        solr_record['published_date'] = published_dates[0]
+                        revision = ';'.join([datetime.datetime.strptime(pdate[:10], '%Y-%m-%d').strftime('%B %d, %Y') for pdate in published_dates[1:]])
+                        solr_record['revision_dates'] = 'revised on {}'.format(revision)
+                        #print(published_dates)
+                    solr_record['title'] = title
+                    solr_record['authors'] = '; '.join(authors)
+                    solr_record['arxiv_url'] = arxiv_url
+                list_for_solr.append(solr_record)
+        # Add to Solr after reading one file completely
+        solr.add(list_for_solr)
+        print("added")
+        #print("Inserted list length =", len(list_for_solr))
+
+def create_concurrent_futures():
+    """ Uses all the cores to do the parsing and inserting"""
     folderpath = '/home/ashwath/Files/arxiv-cs-dataset-LREC2018/'
-    for filepath in iglob(os.path.join(folderpath, '*.txt')):
-        with open(filepath, 'r') as file:
-            list_for_solr = []
-            filename = os.path.basename(filepath)
-            print(filename)
-            filename_without_extension = '.'.join(filename.split('.')[:2])
-            for line in file:
-                # Many lines have just ======, do not index them
-                if not line.startswith('=='):
-                    solr_record = {}
-                    solr_record['sentence'] = line
-                    solr_record['arxiv_identifier'] = filename_without_extension
-                    # Read the metadata from the arxiv_metadata index
-                    arxiv_metadata_result = search_solr(arxiv_identifier, 'arxiv_metadata', 'arxiv_identifier', 1)
-                    # Get the dblp url from the metadata index
-                    dblp_url = search_solr(arxiv_identifier, 'metadata', 'arxiv_identifier', 1)
-                    dblp_url = dblp_url if dblp_url is not None else 'unavailable'
-                    solr_record['dblp_url'] = dblp_url
-
-                    for title, authors, arxiv_url, published_dates in arxiv_metadata_result:
-                        # Flatten the published dates into a single string. Not using a DateRange field because
-                        # a grouping is done in django_paper_search which needs the dates to be a single string
-                        if len(published_dates) == 1:
-                            solr_record['published_date'] = published_dates[0]
-                            solr_record['revision_dates'] = 'unavailable'
-                        else:
-                            solr_record['published_date'] = published_dates[0]
-                            revision = ';'.join([datetime.datetime.strptime(pdate[:10], '%Y-%m-%d').strftime('%B %d, %Y') for pdate in published_dates[1:]])
-                            solr_record['revision_dates'] = 'revised on {}'.format(revision)
-                            #print(published_dates)
-                        solr_record['title'] = title
-                        solr_record['authors'] = '; '.join(authors)
-                        solr_record['arxiv_url'] = arxiv_url
-                    list_for_solr.append(solr_record)
-            # Add to Solr after reading one file completely
-            solr.add(list_for_solr)
-            #print("Inserted list length =", len(list_for_solr))
+    text_files = glob(os.path.join(folderpath, '*.txt'))
+    with concurrent.futures.ProcessPoolExecutor(max_workers=4) as executor:
+        executor.map(parse_file_build_index, text_files)
                 
-
 if __name__ == '__main__':
     start_time = time()
-    parse_file_build_index()
+    create_concurrent_futures()
     print("Completed in {} seconds!".format(time() - start_time))
     

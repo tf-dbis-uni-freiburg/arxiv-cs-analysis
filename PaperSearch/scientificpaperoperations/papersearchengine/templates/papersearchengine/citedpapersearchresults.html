@@ -68,7 +68,7 @@
 </h5>
 <div class="card-group">
 	<div class="flex-row mb5">
-		{% for annotation, details, sentence_list, arxiv_identifier, title, authors, arxiv_url, published_date, dblp_url in results %}
+		{% for annotation, details, sentence_list, arxiv_identifier, title, authors, arxiv_url, published_date, revision_dates, dblp_url in results %}
 			<div class="col-12">
 				<div class="card mb-4 mt-3 teal darken-4 resultscard">
 					<div class="card-header #text-white colour1">
@@ -78,8 +78,13 @@
 					<div class="card-body text-white teal darken-3">
      						<!--Title-->
    						<h5 class="card-title"> {{authors}} </h4>
-                                <h6> {{published_date}} </h6> 
-                                <br/>
+                      {% if revision_dates != 'unavailable' %} 
+                      <h6> {{published_date}} </h6> 
+                      <h6> Submitted on {{published_date}}, {{revision_dates}}. </h6>
+                      <br/>
+                      {% else %}
+                      <h6> Submitted on {{published_date}}. <br/> </h6>
+                      {% endif %}
 						{% if sentence_list|length == 1 %}
          						{% for sentence, annotation_indices, before_annotation_indices, after_annotation_indices in sentence_list %}
 							  <p> {{sentence|slice:before_annotation_indices}} 
@@ -98,7 +103,7 @@
        					<div class="card-footer text-muted teal darken-4 text-white">
       						<a href="{{arxiv_url}}" target="_blank">
       						<img src="{% static 'papersearchengine/img/arxivlogo.png' %}" height="30" title="Visit this paper's page on arXiV." class="float-left" alt="arXiV.org"></a>
-						{% if dblp_url %} 
+						{% if dblp_url != 'unavailable' %} 
 							<a href="{{dblp_url}}" target="_blank">
      							<img src="{% static 'papersearchengine/img/dblplogo.png' %}" height="30" title="Visit this paper's page on dblp." class="float-right" alt="dblp"> </a>
 						{% else %}

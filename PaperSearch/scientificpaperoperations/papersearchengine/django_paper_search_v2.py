@@ -8,7 +8,8 @@
     # Author:      Ashwath Sampath
     #
     # Created:     v1: 14-05-2018 : modified continuously afterwards
-    #              v2: 21-10-2018
+    #              v2: 20-12-2018: Compoletely new indices built which massively simplify
+    #                              this program by doing a lot of the work at index-time.
     # Copyright:   (c) Ashwath Sampath 2018
     #-------------------------------------------------------------------------------
 
@@ -22,58 +23,23 @@ import pandas as pd
 from sklearn.externals import joblib
 import emoji
 
-def search_sentences(query, num_rows):
+def search_sentences_plus(query, num_rows):
     """ Takes user's query as input, finds all sentences with the given
     phrase, then finds the title, authors and url of the paper from the
-    arxiv_metadata and metadata indices. It also gets the results and
+    metadata_plus index which is made up of . It also gets the results and
     normalizes it so that correct errors messages are displayed, and fields
     are displayed in the right format. """
     # each result: sentence, filename (arxiv-identifier) and title
-    results, query, num_results = search_solr(query, num_rows,
-                                             'papers', 'sentence', 'exact')
-    if results == []:
-        return results
-    for result in results:
-        # Get the papers index file name (arxiv_identifier).
-        arxiv_identifier = result[1]
-        # Note: for the following call, only 1 result will be returned, as it's an 
-        # exact match search on arxiv_identifier. The num_rows attribute is 
-        # irrelevant, and can take any value >= 1.
-        res_arxiv, _, _ = search_solr(arxiv_identifier, 1,
-                                'arxiv_metadata', 'arxiv_identifier', 'exact')
-        res_dblp, _, _ = search_solr(arxiv_identifier, 1,
-                                'metadata', 'arxiv_identifier', 'exact')
-        if res_arxiv == []:
-            # Not found in arxiv_metadata
-            if res_dblp == []:
-                # Not found in metadata index too
-                # title, authors, arxiv url, published date, dblp url
-                result.extend(['No title found for this result', 'No author metadata found for this result', 
-                    'No Arxiv URL found for this result', 'No published date found for this result', None])
-            else:
-                # found in metadata index
-                dblp_url = res_dblp[0][2] if res_dblp[0][2] != '' and res_dblp[0][2] is not None else None
-                title = res_dblp[0][0] if res_dblp[0][0] != '' and res_dblp[0][0] is not None else 'No title found for this result'
-                authors = '; '.join(res_dblp[0][1]) if res_dblp[0][1] != [] and res_dblp[0][1] is not None else 'No author metadata found for this result'
-
-                result.extend([title, authors, 'No arXiV URL found for this result', 'No published date found for this result', dblp_url])
-
-        else:
-            # res contains title, authors, url, arxiv_identifier, published_date (from arxiv_metadata) 
-            # Note: authors and published_date are lists.
-            title, authors, arxiv_url, arxiv_identifier, published_date = res_arxiv[0]
-            # Normalize the fields except published_date, which is normalized later in Django views (as it should be sorted before normalizing)
-            title = title if title != '' and title is not None else 'No title found for this result'
-            authors = '; '.join(authors) if authors != [] and authors is not None else 'No author metadata found for this result'
-            arxiv_url = arxiv_url if arxiv_url is not None and arxiv_url != '' else 'No arXiV URL found for this result'
-
-            if res_dblp == []:
-                result.extend([title, authors, arxiv_url, published_date, None])
-            else:
-                dblp_url = res_dblp[0][2] if res_dblp[0][2] != '' and res_dblp[0][2] is not None else None
-                result.extend([title, authors, arxiv_url, published_date, dblp_url])
-    results.sort(key=lambda x: x[5][0], reverse=True)
-    return results, query, num_rows, num_results
+    results_df, query, num_results = search_solr(query, num_rows * 10,
+                                             'papers_plus', 'sentence', 'exact', 
+                                             'published_date desc', None)
+    if len(results_df) == 0:
+        return []
+    # Change the date format of the published_date column to match what we want in the output.
+    results_df = change_date_format(results_df, 'published_date')
+    results = results_df.values.tolist()
+    results = results[:num_rows]
+    return results, num_results, num_rows, query
                           
 def search_references_plus(query, num_rows, search_type):
     """ Takes user's query as input, finds all references with the given
@@ -127,7 +93,6 @@ def addoffsets_citation(row):
     """ Adds offsets for the start and end of the annotation in the each sentence of sentence_list. 
     row is a row of the dataframe with columns 'citing_sentence' and 'annotation' """
     # Foll. list will be of the form [[sentence1, annotation_index, before_annotation_index, after_annotation_index], [sentence2,...],...]]
-    #print("I'm here", row, type(row))
     sentence_list = row.iloc[1]#row.citings_sentence
     annotation = row.iloc[0]#row.annotation
     sentence_with_annotations = []
@@ -173,6 +138,11 @@ def get_sentiment_from_model(df):
 def group_sentences_together(df):
     """ Takes a list of lists of results which may include multiple sentences from the same CITING paper, and groups them
     together in a list. The final list of lists which is returned will have fewer or equal results as the input list."""
+    
+    # Drop duplicate rows based on citing_arxiv identifier, citing_sentence and annotation
+    dropbasedoncols = ['citing_arxiv_identifier', 'citing_sentence', 'annotation']
+    df = df.drop_duplicates(subset=dropbasedoncols)
+
     # Convert the list of lists into a dataframe, replace missing values (Nones are converted into NaNs when a dataframe is created)
 
     groupby_list = ['citing_published_date', 'citing_arxiv_identifier', 'citing_paper_title', 'citing_paper_authors', 
@@ -203,47 +173,34 @@ def flatten_dates_modify_annotations(results):
     return results
 
 def search_authors(query, num_rows):
-    """ Returns all metadata (title, authors, url) when names of 1 or more
+    """ Returns all metadata (title, authors, urls) when names of 1 or more
     authors are given in the user query. """
-    results, query, num_results = search_solr(query, num_rows,
-                                             'arxiv_metadata', 'authors',
-                                             'and')
-    for result in results:
-            arxivid = result[3]
-            # This should return only 1 row (exact match on arxiv_identifier
-            res_dblp, _, _ = search_solr(arxivid, 1, 'metadata', 'arxiv_identifier', 'exact')
-            # We want the dblp identifier, i.e. the url. It is the 3rd element in res_dblp,
-            # i.e. index 2. Add this to results. As res_dblp is a list of lists (it is generally meant 
-            # for multiple results), we need res_dblp[0][2]
-            dblp_url = None if res_dblp == [] else res_dblp[0][2]
-            # Also, the dblp_url may have no value (None or "") in the metadata file/index, check for this.
-            dblp_url = dblp_url if dblp_url != '' and dblp_url is not None else None
-            result.append(dblp_url)
-    # 5th element of the list is published_date, which might contain one or more dates (as strings with
-    # timestamp). Sort the whole list according to the first element of this date, i.e. result[4][0]
-    results.sort(key=lambda x: x[4][0], reverse=True)
-    return results, num_results, num_rows
+    results_df, query, num_results = search_solr(query, num_rows * 10,
+                                             'metadata_plus', 'authors', 'and', 
+                                             'published_date desc', None)
+    if len(results_df) == 0:
+        return []
+    # Change the date format of the published_date column to match what we want in the output.
+    results_df = change_date_format(results_df, 'published_date')
+    results = results_df.values.tolist()
+    results = results[:num_rows]
+    return results, num_results, num_rows, query
 
 def search_meta_titles(query, num_rows):
     """ Returns all metadata (title, authors, url) when a partial or
     complete title is given in the user query. """
-    results, query, num_results = search_solr(query, num_rows,
-                                             'arxiv_metadata', 'title',
-                                             'exact')
-    for result in results:
-            arxivid = result[3]
-            # This should return only 1 row (exact match on arxiv_identifier
-            res_dblp, _, _ = search_solr(arxivid, 1, 'metadata', 'arxiv_identifier', 'exact')
-            # We want the dblp identifier, i.e. the url. It is the 3rd element in res_dblp,
-            # i.e. index 2. Add this to results. As res_dblp is a list of lists (it is generally meant 
-            # for multiple results), we need res_dblp[0][2]
-            if res_dblp == []:
-                dblp_url = "No DBLP URL found for this result"
-            else:
-                dblp_url = res_dblp[0][2]
-            result.append(dblp_url)
-    results.sort(key=lambda x: x[4][0], reverse=True)
-    return results, num_results, num_rows
+    
+    results_df, query, num_results = search_solr(query, num_rows * 10,
+                                             'metadata_plus', 'title', 'exact', 
+                                             'published_date desc', None)
+    if len(results_df) == 0:
+        return []
+    
+    # Change the date format of the published_date column to match what we want in the output.
+    results_df = change_date_format(results_df, 'published_date')
+    results = results_df.values.tolist()
+    results = results[:num_rows]
+    return results, num_results, num_rows, query
 
 def add_query_type(query, query_type):
     """ Returns the query based on the query type (exact or proximity)
@@ -295,7 +252,7 @@ def parse_json(data, collection):
     query = data['responseHeader']['params']['q']
     num_responses = data['response']['numFound']
     if num_responses == 0:
-        if collection == 'references_plus':
+        if collection in ('references_plus', 'metadata_plus', 'papers_plus'):
             return(pd.DataFrame(), query, 0)
         else:
             return ([], query, 0)
@@ -309,6 +266,10 @@ def parse_json(data, collection):
         results = parse_refs_json(data)
     elif collection == 'references_plus':
         results = parse_references_plus_json(data)
+    elif collection == 'papers_plus':
+        results = parse_papers_plus_json(data)
+    elif collection == 'metadata_plus':
+        results = parse_metadata_plus_json(data)            
     return (results, query, num_responses)
 
 def parse_sentence_json(data):
@@ -318,7 +279,8 @@ def parse_sentence_json(data):
     # docs contains sentence, fileName, id generated by Solr
     docs = data['response']['docs']
     # Create a list object for the results with sentence, fileName and title
-    results = [[docs[i].get('sentence')[0], docs[i].get('fileName')]
+    res 
+    ults = [[docs[i].get('sentence')[0], docs[i].get('fileName')]
                 for i in range(len(data['response']['docs']))]
     return results
 
@@ -396,6 +358,52 @@ def parse_references_plus_json(data):
     docs = data['response']['docs']
     docs_df = pd.DataFrame(docs)
     docs_df = docs_df.drop(['_version_', 'id'], axis=1)
-    # print(docs_df.head(20))
-    # print(docs_df.columns)
+    return docs_df
+
+def parse_papers_plus_json(data):
+    """ Function which parses the papers_plus json and returns a pandas dataframe of the results.
+    Solr Field definition shown below: 
+        <!-- Citing paper fields: papers, metadata, arxiv_metadata -->
+    <!-- Papers -->
+    <field name="sentencenum" type="pint" indexed="true" stored="true" multiValued="false"/>
+    <field name="sentence" type="text_classic" indexed="true" stored="true" multiValued="false"/>
+    <field name="arxiv_identifier" type="string" indexed="true" stored="true" multiValued="false"/>
+    
+    <!-- arxiv metadata-->
+    <field name="arxiv_url" type="string" indexed="true" stored="true" multiValued="false"/> 
+    <field name="authors" type="text_classic" indexed="true" stored="true" multiValued="false"/> 
+    <field name="title" type="text_classic" indexed="true" stored="true" multiValued="false"/> 
+    <field name="published_date" type="pdate" indexed="true" stored="true" multiValued="false"/>
+    <field name="revision_dates" type="string" indexed="true" stored="true" multiValued="false"/>
+
+    <!-- meta field: dblp_url-->
+    <field name="dblp_url" type="string" indexed="true" stored="true" multiValued="false"/> 
+    """
+    docs = data['response']['docs']
+    docs_df = pd.DataFrame(docs)
+    docs_df = docs_df.drop(['_version_', 'id'], axis=1)
+    return docs_df
+
+def parse_metadata_plus_json(data):
+    """ Function which parses the papers_plus json and returns a pandas dataframe of the results.
+    Solr Field definition shown below: 
+        <!-- Citing paper fields: papers, metadata, arxiv_metadata -->
+    <!-- Papers -->
+    <field name="sentencenum" type="pint" indexed="true" stored="true" multiValued="false"/>
+    <field name="sentence" type="text_classic" indexed="true" stored="true" multiValued="false"/>
+    <field name="arxiv_identifier" type="string" indexed="true" stored="true" multiValued="false"/>
+    
+    <!-- arxiv metadata-->
+    <field name="arxiv_url" type="string" indexed="true" stored="true" multiValued="false"/> 
+    <field name="authors" type="text_classic" indexed="true" stored="true" multiValued="false"/> 
+    <field name="title" type="text_classic" indexed="true" stored="true" multiValued="false"/> 
+    <field name="published_date" type="pdate" indexed="true" stored="true" multiValued="false"/>
+    <field name="revision_dates" type="string" indexed="true" stored="true" multiValued="false"/>
+
+    <!-- meta field: dblp_url-->
+    <field name="dblp_url" type="string" indexed="true" stored="true" multiValued="false"/> 
+    """
+    docs = data['response']['docs']
+    docs_df = pd.DataFrame(docs)
+    docs_df = docs_df.drop(['_version_'], axis=1)
     return docs_df
