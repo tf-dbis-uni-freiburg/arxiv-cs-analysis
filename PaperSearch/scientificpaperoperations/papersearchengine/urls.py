@@ -13,4 +13,5 @@ urlpatterns = [
     path('citedpapersearchresults/', views.cited_paper_search, name='citedpapersearchresults'),
     path('citedauthorsearch/', views.cited_author_serach, name='citedauthorsearch'),
     path('citedauthorsearchresults/', views.cited_author_serach, name='citedauthorsearchresults'),
+    path('about/', views.about, name='about'),
 ]

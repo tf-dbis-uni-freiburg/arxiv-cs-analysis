@@ -234,7 +234,7 @@ def change_dateformat_addoffsets_citation(results):
         # Foll. list will be of the form [[sentence1, annotation_index, before_annotation_index, after_annotation_index], [sentence2,...],...]]
         sentence_with_annotations = []
         for sentence in result[2]:
-            # sublist will contain 1 sentence, and three sets of indeices 
+            # sublist will contain 1 sentence, and three sets of indices 
             sublist = []
             match = re.search(result[0], sentence)
             sublist.append(sentence)
@@ -245,3 +245,10 @@ def change_dateformat_addoffsets_citation(results):
             sentence_with_annotations.append(sublist)
         result[2] = sentence_with_annotations
     return results
+
+def about(request):
+    """ Displays an About Us page. """
+    return render(
+     request,
+    'papersearchengine/about.html',
+    )
